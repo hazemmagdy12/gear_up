@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/colors.dart'; // استدعاء الألوان
-import 'signup_screen.dart'; // استدعاء صفحة التسجيل
-import 'forgot_password_screen.dart'; // 1. استدعاء صفحة نسيان الباسورد
+import '../../../core/theme/colors.dart';
+import 'signup_screen.dart';
+import 'forgot_password_screen.dart';
+import '../../home/screens/main_layout.dart'; // استدعاء الشاشة الرئيسية
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -50,14 +51,12 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             const SizedBox(height: 20),
 
-            // 1. عناوين الترحيب
             const Text("Welcome Back", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             const Text("Sign in to continue", style: TextStyle(color: AppColors.textSecondary, fontSize: 16)),
 
             const SizedBox(height: 32),
 
-            // 2. حقل الإيميل
             const Text("Email", style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextFormField(
@@ -70,7 +69,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 20),
 
-            // 3. حقل الباسورد
             const Text("Password", style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextFormField(
@@ -93,12 +91,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
 
-            // 4. نسيان كلمة السر (تم التفعيل ✅)
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
                 onPressed: () {
-                  // الانتقال لصفحة نسيان الباسورد
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const ForgotPasswordScreen()),
@@ -110,12 +106,15 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 24),
 
-            // 5. زرار الدخول
+            // زرار الدخول الأساسي
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // كود الفايربيز لاحقاً
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainLayout()),
+                  );
                 },
                 child: const Text("Login", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
               ),
@@ -123,7 +122,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 32),
 
-            // 6. الفاصل
             Row(
               children: const [
                 Expanded(child: Divider(color: AppColors.border)),
@@ -137,7 +135,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 24),
 
-            // 7. زراير السوشيال
+            // زراير السوشيال ميديا
             Row(
               children: [
                 Expanded(child: _buildSocialButton('assets/images/google.png', "Google")),
@@ -148,7 +146,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 24),
 
-            // 8. إنشاء حساب جديد
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -170,9 +167,16 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
+  // دالة بناء أزرار السوشيال ميديا (تم التعديل لتفعيل الانتقال)
   Widget _buildSocialButton(String iconPath, String label) {
     return OutlinedButton.icon(
-      onPressed: () {},
+      onPressed: () {
+        // التعديل هنا: الانتقال للشاشة الرئيسية عند الضغط
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainLayout()),
+        );
+      },
       icon: Image.asset(iconPath, height: 24),
       label: Text(label, style: const TextStyle(color: Colors.black)),
       style: OutlinedButton.styleFrom(

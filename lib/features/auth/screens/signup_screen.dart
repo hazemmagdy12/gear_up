@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'login_screen.dart'; // استدعاء صفحة اللوجين
 import '../../../core/theme/colors.dart'; // استدعاء الألوان
+import '../../home/screens/main_layout.dart'; // 1. استدعاء الشاشة الرئيسية هنا
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -134,7 +135,11 @@ class _SignupScreenState extends State<SignupScreen> {
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // كود التسجيل بفايربيز هيتكتب هنا
+                  // 2. التعديل هنا: الانتقال للشاشة الرئيسية بعد التسجيل
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainLayout()),
+                  );
                 },
                 child: const Text("Sign Up", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
               ),
@@ -142,14 +147,13 @@ class _SignupScreenState extends State<SignupScreen> {
 
             const SizedBox(height: 24),
 
-            // 8. الرجوع لتسجيل الدخول (تم التعديل ✅)
+            // 8. الرجوع لتسجيل الدخول
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Text("Already have an account? ", style: TextStyle(color: AppColors.textSecondary)),
                 GestureDetector(
                   onTap: () {
-                    // هنا التعديل: يروح لصفحة اللوجين بدل ما يرجع لورا
                     Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const LoginScreen()),

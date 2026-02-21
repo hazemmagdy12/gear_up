@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart'; // استدعاء ملف الألوان
 import '../../auth/screens/login_screen.dart'; // استدعاء صفحة تسجيل الدخول
-import '../../auth/screens/signup_screen.dart'; // 1. استدعاء صفحة إنشاء الحساب
+import '../../auth/screens/signup_screen.dart'; // استدعاء صفحة إنشاء الحساب
+import '../../home/screens/main_layout.dart'; // 1. استدعاء الشاشة الرئيسية هنا
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -54,7 +55,11 @@ class WelcomeScreen extends StatelessWidget {
               // 4. زرار Skip (أبيض بحدود)
               OutlinedButton(
                 onPressed: () {
-                  // لسه هنبرمجه يروح للصفحة الرئيسية
+                  // 2. التعديل هنا: الانتقال للشاشة الرئيسية ومنع الرجوع للخلف
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MainLayout()),
+                  );
                 },
                 style: OutlinedButton.styleFrom(
                   side: const BorderSide(color: AppColors.border), // لون الحدود
@@ -90,7 +95,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // 6. زرار Sign Up (أسود/رمادي غامق) - تم التفعيل ✅
+              // 6. زرار Sign Up (أسود/رمادي غامق)
               ElevatedButton(
                 onPressed: () {
                   // الانتقال لصفحة إنشاء حساب
