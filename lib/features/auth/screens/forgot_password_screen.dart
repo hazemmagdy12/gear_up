@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/colors.dart'; // استدعاء الألوان
+import '../../../core/theme/colors.dart';
 
 class ForgotPasswordScreen extends StatefulWidget {
   const ForgotPasswordScreen({super.key});
@@ -20,19 +20,38 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Navigator.pop(context), // رجوع
+          onPressed: () => Navigator.pop(context),
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/images/logo.png', height: 30),
+            Image.asset('assets/images/logo.png', height: 40), // التعديل هنا
             const SizedBox(width: 8),
-            const Text(
-              "GEAR UP",
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+            ShaderMask( // التعديل هنا
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF2E86AB),
+                  Color(0xFF0A3656),
+                ],
+              ).createShader(bounds),
+              child: Text(
+                "GEAR UP",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.2),
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -46,7 +65,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
           children: [
             const SizedBox(height: 20),
 
-            // 1. العناوين
             const Text("Forgot Password?", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 12),
             const Text(
@@ -56,7 +74,6 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             const SizedBox(height: 32),
 
-            // 2. حقل الإيميل
             const Text("Email", style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             TextFormField(
@@ -69,12 +86,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             const SizedBox(height: 32),
 
-            // 3. زرار الإرسال
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // كود إرسال إيميل الاستعادة بفايربيز
+                  // كود إرسال إيميل الاستعادة
                 },
                 child: const Text("Send Reset Link", style: TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold)),
               ),
@@ -82,10 +98,9 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
 
             const SizedBox(height: 24),
 
-            // 4. زرار الرجوع للدخول
             Center(
               child: TextButton(
-                onPressed: () => Navigator.pop(context), // يرجع لصفحة اللوجين
+                onPressed: () => Navigator.pop(context),
                 child: const Text("Back to Login", style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
               ),
             ),

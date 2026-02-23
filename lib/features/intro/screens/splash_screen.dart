@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:async'; // عشان نستخدم التايمر
-import 'welcome_screen.dart'; // استدعاء الصفحة اللي هنروحلها
+import 'dart:async';
+import 'welcome_screen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -25,7 +25,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // خلفية بيضاء
+      backgroundColor: Colors.white,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -33,17 +33,39 @@ class _SplashScreenState extends State<SplashScreen> {
             // اللوجو
             Image.asset(
               'assets/images/logo.png',
-              width: 150, // حجم اللوجو
+              width: 150,
               height: 150,
             ),
-            const SizedBox(height: 20),
-            // اسم التطبيق تحت اللوجو (اختياري)
-            const Text(
-              "GEAR UP",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFF1F5F8B), // نفس اللون الأزرق الأساسي
+
+            // مسافة صغيرة جداً عشان الكلمة تبقى قريبة من اللوجو
+            const SizedBox(height: 4),
+
+            // نفس كود الفونت والتدرج اللوني بتاع شاشة الويلكام بالظبط
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF2E86AB), // أزرق فاتح/تيل من فوق
+                  Color(0xFF0A3656), // كحلي/أزرق غامق جداً من تحت
+                ],
+              ).createShader(bounds),
+              child: Text(
+                "GEAR UP",
+                style: TextStyle(
+                  fontSize: 38,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 2.0,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.3),
+                      offset: const Offset(0, 3),
+                      blurRadius: 5,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

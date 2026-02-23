@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'login_screen.dart'; // استدعاء صفحة اللوجين
-import '../../../core/theme/colors.dart'; // استدعاء الألوان
-import '../../home/screens/main_layout.dart'; // 1. استدعاء الشاشة الرئيسية هنا
+import 'login_screen.dart';
+import '../../../core/theme/colors.dart';
+import '../../home/screens/main_layout.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -11,7 +11,6 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  // مفاتيح التحكم في الحقول
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
@@ -35,14 +34,33 @@ class _SignupScreenState extends State<SignupScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/images/logo.png', height: 30),
+            Image.asset('assets/images/logo.png', height: 40), // التعديل هنا
             const SizedBox(width: 8),
-            const Text(
-              "GEAR UP",
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+            ShaderMask( // التعديل هنا
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF2E86AB),
+                  Color(0xFF0A3656),
+                ],
+              ).createShader(bounds),
+              child: Text(
+                "GEAR UP",
+                style: TextStyle(
+                  fontSize: 26,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.2),
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -56,14 +74,12 @@ class _SignupScreenState extends State<SignupScreen> {
           children: [
             const SizedBox(height: 10),
 
-            // 1. العناوين
             const Text("Create Account", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
             const SizedBox(height: 8),
             const Text("Join GEAR UP today", style: TextStyle(color: AppColors.textSecondary, fontSize: 16)),
 
             const SizedBox(height: 24),
 
-            // 2. حقل الاسم الكامل
             _buildLabel("Full Name"),
             TextFormField(
               controller: _nameController,
@@ -74,7 +90,6 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             const SizedBox(height: 16),
 
-            // 3. حقل الإيميل
             _buildLabel("Email"),
             TextFormField(
               controller: _emailController,
@@ -85,7 +100,6 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             const SizedBox(height: 16),
 
-            // 4. حقل رقم الهاتف
             _buildLabel("Phone Number"),
             TextFormField(
               controller: _phoneController,
@@ -97,7 +111,6 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             const SizedBox(height: 16),
 
-            // 5. حقل كلمة السر
             _buildLabel("Password"),
             TextFormField(
               controller: _passwordController,
@@ -113,7 +126,6 @@ class _SignupScreenState extends State<SignupScreen> {
             ),
             const SizedBox(height: 16),
 
-            // 6. تأكيد كلمة السر
             _buildLabel("Confirm Password"),
             TextFormField(
               controller: _confirmPasswordController,
@@ -130,12 +142,10 @@ class _SignupScreenState extends State<SignupScreen> {
 
             const SizedBox(height: 32),
 
-            // 7. زرار إنشاء الحساب
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: () {
-                  // 2. التعديل هنا: الانتقال للشاشة الرئيسية بعد التسجيل
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const MainLayout()),
@@ -147,7 +157,6 @@ class _SignupScreenState extends State<SignupScreen> {
 
             const SizedBox(height: 24),
 
-            // 8. الرجوع لتسجيل الدخول
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -164,14 +173,13 @@ class _SignupScreenState extends State<SignupScreen> {
               ],
             ),
 
-            const SizedBox(height: 20), // مسافة أمان تحت
+            const SizedBox(height: 20),
           ],
         ),
       ),
     );
   }
 
-  // دالة صغيرة عشان منكررش كود الـ Text كل شوية
   Widget _buildLabel(String text) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0),

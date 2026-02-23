@@ -6,7 +6,7 @@ class CarDetailsScreen extends StatelessWidget {
   final String model;
   final String price;
   final String rating;
-  final bool isPromoted; // الشرط اللي بيحدد دي عربية عادية ولا إعلان
+  final bool isPromoted;
 
   const CarDetailsScreen({
     super.key,
@@ -14,7 +14,7 @@ class CarDetailsScreen extends StatelessWidget {
     required this.model,
     required this.price,
     required this.rating,
-    this.isPromoted = false, // الديفولت بتاعها False
+    this.isPromoted = false,
   });
 
   @override
@@ -32,29 +32,28 @@ class CarDetailsScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildTitleSection(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
-                  const Text("Specifications", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text("Specifications", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
                   const SizedBox(height: 16),
                   _buildSpecsGrid(),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
-                  const Text("About this vehicle", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.secondary)),
-                  const SizedBox(height: 8),
+                  const Text("About this vehicle", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
+                  const SizedBox(height: 12),
                   Text(
                     "The $brand $model (2025) is a brand new vehicle featuring a powerful 335 HP engine with 3000cc capacity. With its Automatic transmission and 8 gear shifts, this car delivers exceptional performance and efficiency. The vehicle can reach a maximum speed of 250 km/h and offers 650 L of luggage capacity, making it perfect for both daily commutes and long journeys.",
-                    style: const TextStyle(color: AppColors.textSecondary, height: 1.5),
+                    style: const TextStyle(color: AppColors.textSecondary, height: 1.6, fontSize: 14),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 32),
 
                   _buildCompareButton(),
                   const SizedBox(height: 24),
 
-                  // ظهور عدد المشاهدات لو العربية دي إعلان فقط
                   if (isPromoted) _buildViewsCounter(),
-                  if (isPromoted) const SizedBox(height: 24),
+                  if (isPromoted) const SizedBox(height: 32),
 
-                  const Text("Reviews", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                  const Text("Reviews", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900)),
                   const SizedBox(height: 16),
                   _buildReviewSection(),
                   const SizedBox(height: 40),
@@ -67,16 +66,16 @@ class CarDetailsScreen extends StatelessWidget {
     );
   }
 
-  // 1. صورة العربية والزراير العلوية
+  // 1. صورة العربية
   Widget _buildHeaderImage(BuildContext context) {
     return Stack(
       children: [
         Container(
-          height: 280,
+          height: 320,
           decoration: const BoxDecoration(
-            color: AppColors.surface, // خلفية مؤقتة لحد الصور الحقيقية
+            color: AppColors.surface,
           ),
-          child: const Center(child: Icon(Icons.directions_car, size: 100, color: AppColors.textHint)),
+          child: const Center(child: Icon(Icons.directions_car, size: 120, color: AppColors.textHint)),
         ),
         Positioned(
           top: 50,
@@ -88,44 +87,50 @@ class CarDetailsScreen extends StatelessWidget {
               GestureDetector(
                 onTap: () => Navigator.pop(context),
                 child: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: Colors.white.withOpacity(0.9), shape: BoxShape.circle),
                   child: const Icon(Icons.arrow_back, color: Colors.black),
                 ),
               ),
               Row(
                 children: [
+                  // التعديل هنا: غيرنا أيقونة الشير لـ ios_share عشان شكلها أشيك وأحدث
                   Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                    child: const Icon(Icons.share_outlined, color: Colors.black),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(color: Colors.white.withOpacity(0.9), shape: BoxShape.circle),
+                    child: const Icon(Icons.ios_share, color: Colors.black, size: 22),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12),
                   Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                    child: const Icon(Icons.favorite_border, color: Colors.black),
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(color: Colors.white.withOpacity(0.9), shape: BoxShape.circle),
+                    child: const Icon(Icons.favorite_border, color: Colors.black, size: 22),
                   ),
                 ],
               ),
             ],
           ),
         ),
-        Positioned(
-          top: 110,
-          left: 16,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-            decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(8)),
-            child: Row(
-              children: const [
-                Icon(Icons.star, color: Colors.white, size: 14),
-                SizedBox(width: 4),
-                Text("Top Rated", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
-              ],
+        if (isPromoted)
+          Positioned(
+            bottom: 20,
+            left: 24,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))],
+              ),
+              child: Row(
+                children: const [
+                  Icon(Icons.star, color: Colors.white, size: 16),
+                  SizedBox(width: 6),
+                  Text("Top Rated", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
+                ],
+              ),
             ),
-          ),
-        )
+          )
       ],
     );
   }
@@ -136,27 +141,35 @@ class CarDetailsScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(brand, style: const TextStyle(color: AppColors.textHint, fontSize: 14)),
-            const SizedBox(height: 4),
-            Text(model, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 22)),
-            const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.star, color: Colors.amber, size: 18),
-                const SizedBox(width: 4),
-                Text(rating, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                const Text(" (124 reviews)", style: TextStyle(color: AppColors.textHint, fontSize: 14)),
-              ],
-            ),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                brand.toUpperCase(),
+                style: const TextStyle(color: AppColors.textHint, fontSize: 14, letterSpacing: 2.0, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                model,
+                style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 28, height: 1.1),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  const Icon(Icons.star, color: Colors.amber, size: 20),
+                  const SizedBox(width: 4),
+                  Text(rating, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  const Text(" (124 reviews)", style: TextStyle(color: AppColors.textHint, fontSize: 14)),
+                ],
+              ),
+            ],
+          ),
         ),
         Column(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 20)),
+            Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900, fontSize: 22)),
             const SizedBox(height: 4),
             const Text("Average price", style: TextStyle(color: AppColors.textHint, fontSize: 12)),
           ],
@@ -170,8 +183,9 @@ class CarDetailsScreen extends StatelessWidget {
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
+      padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 2.2,
+      childAspectRatio: 2.4,
       mainAxisSpacing: 12,
       crossAxisSpacing: 12,
       children: [
@@ -182,19 +196,21 @@ class CarDetailsScreen extends StatelessWidget {
         _buildSpecCard("CC", "3000"),
         _buildSpecCard("Torque", "330 lb-ft"),
         _buildSpecCard("Transmission", "Automatic"),
-        _buildSpecCard("Luggage Capacity", "650 L"),
-        _buildSpecCard("Gear Shifts", "8"),
-        _buildSpecCard("Maximum Speed", "250 km/h"),
+        _buildSpecCard("Luggage", "650 L"),
       ],
     );
   }
 
   Widget _buildSpecCard(String title, String value) {
     return Container(
-      padding: const EdgeInsets.all(12),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        border: Border.all(color: AppColors.border),
+        color: Colors.white,
+        border: Border.all(color: const Color(0xFFEEEEEE)),
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: Colors.black.withOpacity(0.01), blurRadius: 4, offset: const Offset(0, 2)),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -202,7 +218,7 @@ class CarDetailsScreen extends StatelessWidget {
         children: [
           Text(title, style: const TextStyle(color: AppColors.textHint, fontSize: 12)),
           const SizedBox(height: 4),
-          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: Colors.black)),
         ],
       ),
     );
@@ -214,39 +230,48 @@ class CarDetailsScreen extends StatelessWidget {
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: () {},
-        icon: const Icon(Icons.compare_arrows, color: Colors.white),
+        icon: const Icon(Icons.compare_arrows, color: Colors.white, size: 22),
         label: const Text("Added to Comparison", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.secondary,
-          padding: const EdgeInsets.symmetric(vertical: 16),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          backgroundColor: AppColors.primary,
+          padding: const EdgeInsets.symmetric(vertical: 18),
+          elevation: 8,
+          shadowColor: AppColors.primary.withOpacity(0.5),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         ),
       ),
     );
   }
 
-  // 5. عداد المشاهدات (بيظهر في الإعلانات بس)
+  // 5. عداد المشاهدات
   Widget _buildViewsCounter() {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAF4FF), // لبني فاتح
+        color: AppColors.primary,
         borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5)),
+        ],
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
-            decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
-            child: const Icon(Icons.visibility, color: Colors.white, size: 28),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.2),
+              shape: BoxShape.circle,
+            ),
+            child: const Icon(Icons.visibility_outlined, color: Colors.white, size: 28),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: const [
-              Text("2,543", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: AppColors.primary)),
-              Text("Views", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+              Text("2,543", style: TextStyle(fontSize: 26, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 1.5)),
+              SizedBox(height: 2),
+              Text("Total Views", style: TextStyle(color: Colors.white70, fontSize: 13)),
             ],
           ),
         ],
@@ -259,42 +284,52 @@ class CarDetailsScreen extends StatelessWidget {
     return Column(
       children: [
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(16),
+            color: Colors.white,
+            border: Border.all(color: const Color(0xFFE0E0E0)),
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 10, offset: const Offset(0, 4)),
+            ],
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text("Write a Review", style: TextStyle(fontWeight: FontWeight.bold)),
+              const Text("Write a Review", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
               const SizedBox(height: 12),
               Row(
-                children: List.generate(5, (index) => const Icon(Icons.star, color: Colors.amber, size: 24)),
+                children: List.generate(5, (index) => const Icon(Icons.star_border, color: Colors.amber, size: 28)),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColors.background,
+                  color: const Color(0xFFF8F9FA),
                   borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFEAEAEA)),
                 ),
                 child: const TextField(
                   decoration: InputDecoration(
                     hintText: "Share your experience with this car...",
+                    hintStyle: TextStyle(color: AppColors.textHint, fontSize: 14),
                     border: InputBorder.none,
                   ),
-                  maxLines: 2,
+                  maxLines: 3,
                 ),
               ),
-              const SizedBox(height: 12),
-              ElevatedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.chat_bubble_outline, color: Colors.white, size: 16),
-                label: const Text("Submit Review", style: TextStyle(color: Colors.white)),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              const SizedBox(height: 16),
+              Align(
+                alignment: Alignment.centerRight,
+                child: ElevatedButton.icon(
+                  onPressed: () {},
+                  icon: const Icon(Icons.send, color: Colors.white, size: 16),
+                  label: const Text("Submit", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primary,
+                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
                 ),
               )
             ],
@@ -302,20 +337,20 @@ class CarDetailsScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           decoration: BoxDecoration(
-            border: Border.all(color: AppColors.border),
-            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFE0E0E0)),
+            borderRadius: BorderRadius.circular(20),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
-                padding: const EdgeInsets.all(12),
-                decoration: const BoxDecoration(color: AppColors.secondary, shape: BoxShape.circle),
-                child: const Text("JO", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                padding: const EdgeInsets.all(14),
+                decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
+                child: const Text("JD", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
               ),
-              const SizedBox(width: 12),
+              const SizedBox(width: 16),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -323,16 +358,16 @@ class CarDetailsScreen extends StatelessWidget {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: const [
-                        Text("John D.", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                        Text("John Doe", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                         Text("Oct 20, 2025", style: TextStyle(color: AppColors.textHint, fontSize: 12)),
                       ],
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Row(
                       children: List.generate(5, (index) => const Icon(Icons.star, color: Colors.amber, size: 16)),
                     ),
-                    const SizedBox(height: 8),
-                    const Text("Luxurious and powerful. Amazing driving experience!", style: TextStyle(color: AppColors.textSecondary, height: 1.4)),
+                    const SizedBox(height: 10),
+                    const Text("Luxurious and powerful. The driving experience is absolutely phenomenal!", style: TextStyle(color: AppColors.textSecondary, height: 1.5, fontSize: 14)),
                   ],
                 ),
               ),

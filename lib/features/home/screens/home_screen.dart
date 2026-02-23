@@ -3,6 +3,7 @@ import '../../../core/theme/colors.dart';
 import '../widgets/car_card.dart';
 import '../widgets/filters_bottom_sheet.dart';
 import 'search_screen.dart';
+import '../../nearby/screens/nearby_locations_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -20,45 +21,46 @@ class HomeScreen extends StatelessWidget {
               _buildTopBar(context),
               const SizedBox(height: 24),
 
-              _buildQuickActions(),
+              _buildQuickActions(context),
               const SizedBox(height: 32),
 
-              // 1. القسم المميز (الخلفية الصفراء)
               _buildPromotedSection(),
               const SizedBox(height: 24),
 
-              // 2. قسم العربيات الأعلى تقييماً
               _buildSectionWrapper(
                 title: "Top Rated New Cars",
                 subtitle: "Best rated vehicles in 2025",
-                content: _buildCarList(), // الديفولت هنا false
+                actionText: "View More",
+                bgColor: const Color(0xFFF0F4FF),
+                content: _buildCarList(),
               ),
               const SizedBox(height: 24),
 
-              // 3. قسم الأخبار
+              // قسم الأخبار بعد التعديل
               _buildSectionWrapper(
                 title: "News",
                 subtitle: "Latest news and updates",
-                actionText: "More ➔",
+                actionText: "View More",
+                bgColor: const Color(0xFFF8F9FA),
                 content: _buildNewsList(),
               ),
               const SizedBox(height: 24),
 
-              // 4. قسم العربيات الجديدة
               _buildSectionWrapper(
                 title: "New Cars",
                 subtitle: "Latest models from top brands",
-                actionText: "View All ➔",
-                content: _buildCarList(), // الديفولت هنا false
+                actionText: "View More",
+                bgColor: const Color(0xFFEEF2F5),
+                content: _buildCarList(),
               ),
               const SizedBox(height: 24),
 
-              // 5. قسم العربيات المستعملة
               _buildSectionWrapper(
                 title: "Used Cars",
                 subtitle: "Quality pre-owned vehicles",
-                actionText: "View All ➔",
-                content: _buildCarList(), // الديفولت هنا false
+                actionText: "View More",
+                bgColor: const Color(0xFFF5F6F8),
+                content: _buildCarList(),
               ),
 
               const SizedBox(height: 80),
@@ -69,11 +71,17 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSectionWrapper({required String title, required String subtitle, required Widget content, String? actionText}) {
+  Widget _buildSectionWrapper({
+    required String title,
+    required String subtitle,
+    required Widget content,
+    String? actionText,
+    Color bgColor = const Color(0xFFF4F8FF),
+  }) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFF4F8FF),
+        color: bgColor,
         borderRadius: BorderRadius.circular(24),
       ),
       child: Column(
@@ -92,12 +100,11 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
               if (actionText != null)
-                Text(actionText, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.secondary))
-              else
                 Row(
-                  children: const [
-                    Icon(Icons.chevron_left, color: AppColors.textHint),
-                    Icon(Icons.chevron_right, color: AppColors.secondary),
+                  children: [
+                    Text(actionText, style: const TextStyle(fontWeight: FontWeight.bold, color: AppColors.secondary, fontSize: 13)),
+                    const SizedBox(width: 4),
+                    const Icon(Icons.arrow_forward_ios, color: AppColors.secondary, size: 12),
                   ],
                 ),
             ],
@@ -141,8 +148,9 @@ class HomeScreen extends StatelessWidget {
               ),
               Row(
                 children: const [
-                  Icon(Icons.chevron_left, color: AppColors.textHint),
-                  Icon(Icons.chevron_right, color: AppColors.secondary),
+                  Text("View More", style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.secondary, fontSize: 13)),
+                  SizedBox(width: 4),
+                  Icon(Icons.arrow_forward_ios, color: AppColors.secondary, size: 12),
                 ],
               ),
             ],
@@ -151,16 +159,16 @@ class HomeScreen extends StatelessWidget {
           const Text("Premium featured listings", style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
           const SizedBox(height: 16),
 
-          // التعديل هنا: بعتنا (true) عشان نقول للكروت إن دي إعلانات
           _buildCarList(isPromotedSection: true),
         ],
       ),
     );
   }
 
+  // التعديل هنا: زودنا ارتفاع اللستة عشان الكارت الجديد ياخد مساحته براحته
   Widget _buildNewsList() {
     return SizedBox(
-      height: 290,
+      height: 380,
       child: ListView(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
@@ -168,50 +176,61 @@ class HomeScreen extends StatelessWidget {
           _buildNewsCard(
             date: "Oct 20, 2025",
             title: "Toyota Unveils All-New 2025 Camry Hybrid",
-            desc: "Toyota introduces the next generation of its popular sedan with enhanced fuel efficiency.",
+            desc: "Toyota introduces the next generation of its popular sedan with enhanced fuel efficiency and a sleek new exterior design.",
           ),
           _buildNewsCard(
             date: "Oct 18, 2025",
-            title: "BMW X5 Facelift Revealed",
-            desc: "The new BMW X5 comes with updated tech and a sharper exterior design for 2025.",
+            title: "BMW X5 Facelift Revealed for 2025",
+            desc: "The new BMW X5 comes with updated tech, a sharper exterior design, and improved powertrain options for 2025.",
           ),
         ],
       ),
     );
   }
 
+  // التعديل هنا: كبرنا الكارت ومساحة الصورة والخطوط
   Widget _buildNewsCard({required String date, required String title, required String desc}) {
     return Container(
-      width: 280,
+      width: 320, // كبرنا عرض الكارت
       margin: const EdgeInsets.only(right: 16),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(20), // حواف أنعم
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 6)),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            height: 120,
+            height: 160, // كبرنا مساحة الصورة
             decoration: const BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
             ),
-            child: const Center(child: Icon(Icons.article_outlined, size: 40, color: AppColors.textHint)),
+            child: const Center(child: Icon(Icons.article_outlined, size: 50, color: AppColors.textHint)),
           ),
           Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: const EdgeInsets.all(20.0), // زودنا المسافات الداخلية
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(date, style: const TextStyle(color: AppColors.textHint, fontSize: 12)),
-                const SizedBox(height: 8),
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16), maxLines: 2, overflow: TextOverflow.ellipsis),
-                const SizedBox(height: 8),
-                Text(desc, style: const TextStyle(color: AppColors.textSecondary, fontSize: 12), maxLines: 2, overflow: TextOverflow.ellipsis),
+                Text(date, style: const TextStyle(color: AppColors.textHint, fontSize: 13)),
+                const SizedBox(height: 12),
+                Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, height: 1.3),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis
+                ),
+                const SizedBox(height: 12),
+                Text(
+                    desc,
+                    style: const TextStyle(color: AppColors.textSecondary, fontSize: 14, height: 1.5),
+                    maxLines: 3, // سمحنا للمحتوى ياخد 3 سطور
+                    overflow: TextOverflow.ellipsis
+                ),
               ],
             ),
           ),
@@ -220,10 +239,9 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // التعديل هنا: خلينا الدالة تستقبل متغير بيحدد هل ده قسم الإعلانات ولا لأ
   Widget _buildCarList({bool isPromotedSection = false}) {
     return SizedBox(
-      height: 300,
+      height: 340,
       child: ListView(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
@@ -235,7 +253,7 @@ class HomeScreen extends StatelessWidget {
             price: "EGP 1,850,000",
             rating: "4.9",
             isTopRated: true,
-            isPromoted: isPromotedSection, // بنمرر الحالة للكارت
+            isPromoted: isPromotedSection,
           ),
           CarCard(
             brand: "Toyota",
@@ -244,7 +262,7 @@ class HomeScreen extends StatelessWidget {
             price: "EGP 520,000",
             rating: "4.7",
             isTopRated: true,
-            isPromoted: isPromotedSection, // بنمرر الحالة للكارت
+            isPromoted: isPromotedSection,
           ),
           CarCard(
             brand: "Hyundai",
@@ -253,7 +271,7 @@ class HomeScreen extends StatelessWidget {
             price: "EGP 485,000",
             rating: "4.5",
             isTopRated: false,
-            isPromoted: isPromotedSection, // بنمرر الحالة للكارت
+            isPromoted: isPromotedSection,
           ),
         ],
       ),
@@ -317,32 +335,52 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildQuickActions() {
+  Widget _buildQuickActions(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildActionCard("Saved Cars", Icons.favorite_border, Colors.black),
-        _buildActionCard("Saved Parts", Icons.build_outlined, Colors.purpleAccent),
-        _buildActionCard("Find Nearby", Icons.location_on_outlined, Colors.redAccent),
+        _buildActionCard(
+          title: "Saved Cars",
+          icon: Icons.favorite_border,
+          iconColor: Colors.black,
+          onTap: () {},
+        ),
+        _buildActionCard(
+          title: "Saved Parts",
+          icon: Icons.build_outlined,
+          iconColor: AppColors.primary,
+          onTap: () {},
+        ),
+        _buildActionCard(
+          title: "Find Nearby",
+          icon: Icons.location_on_outlined,
+          iconColor: const Color(0xFFE57373), // الأحمر الهادي اللي اتفقنا عليه
+          onTap: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => const NearbyLocationsScreen()));
+          },
+        ),
       ],
     );
   }
 
-  Widget _buildActionCard(String title, IconData icon, Color iconColor) {
+  Widget _buildActionCard({required String title, required IconData icon, required Color iconColor, required VoidCallback onTap}) {
     return Expanded(
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 4),
-        padding: const EdgeInsets.symmetric(vertical: 16),
-        decoration: BoxDecoration(
-          color: Colors.white, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(16),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2))],
-        ),
-        child: Column(
-          children: [
-            Icon(icon, color: iconColor, size: 28),
-            const SizedBox(height: 8),
-            Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
-          ],
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 4),
+          padding: const EdgeInsets.symmetric(vertical: 16),
+          decoration: BoxDecoration(
+            color: Colors.white, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2))],
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: iconColor, size: 28),
+              const SizedBox(height: 8),
+              Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+            ],
+          ),
         ),
       ),
     );

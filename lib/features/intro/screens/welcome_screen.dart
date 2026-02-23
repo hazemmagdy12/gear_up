@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import '../../../core/theme/colors.dart'; // استدعاء ملف الألوان
-import '../../auth/screens/login_screen.dart'; // استدعاء صفحة تسجيل الدخول
-import '../../auth/screens/signup_screen.dart'; // استدعاء صفحة إنشاء الحساب
-import '../../home/screens/main_layout.dart'; // 1. استدعاء الشاشة الرئيسية هنا
+import '../../../core/theme/colors.dart';
+import '../../auth/screens/login_screen.dart';
+import '../../auth/screens/signup_screen.dart';
+import '../../home/screens/main_layout.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({super.key});
@@ -16,9 +16,9 @@ class WelcomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch, // عشان الزراير تاخد عرض الشاشة
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              const Spacer(flex: 2), // مسافة مرنة فوق
+              const Spacer(flex: 2),
 
               // 1. اللوجو
               Image.asset(
@@ -26,16 +26,37 @@ class WelcomeScreen extends StatelessWidget {
                 height: 120,
                 width: 120,
               ),
-              const SizedBox(height: 24),
 
-              // 2. العنوان الرئيسي
-              const Text(
-                "GEAR UP",
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 32,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary, // الأزرق
+              // التعديل الأول: تقليل المسافة جداً
+              const SizedBox(height: 4),
+
+              // 2. العنوان الرئيسي (بالتدرج اللوني)
+              ShaderMask(
+                blendMode: BlendMode.srcIn,
+                shaderCallback: (bounds) => const LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [
+                    Color(0xFF2E86AB), // أزرق فاتح/تيل من فوق
+                    Color(0xFF0A3656), // كحلي/أزرق غامق جداً من تحت
+                  ],
+                ).createShader(bounds),
+                child: Text(
+                  "GEAR UP",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 38,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: 2.0,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black.withOpacity(0.3),
+                        offset: const Offset(0, 3),
+                        blurRadius: 5,
+                      ),
+                    ],
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -46,26 +67,25 @@ class WelcomeScreen extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.textSecondary, // الرمادي
+                  color: AppColors.textSecondary,
                 ),
               ),
 
-              const Spacer(flex: 1), // مسافة مرنة في النص
+              const Spacer(flex: 1),
 
-              // 4. زرار Skip (أبيض بحدود)
+              // 4. زرار Skip
               OutlinedButton(
                 onPressed: () {
-                  // 2. التعديل هنا: الانتقال للشاشة الرئيسية ومنع الرجوع للخلف
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(builder: (context) => const MainLayout()),
                   );
                 },
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.border), // لون الحدود
+                  side: const BorderSide(color: AppColors.border),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30), // حواف دائرية كاملة
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
                 child: const Text(
@@ -75,10 +95,9 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // 5. زرار Login (أزرق غامق)
+              // 5. زرار Login
               ElevatedButton(
                 onPressed: () {
-                  // الانتقال لصفحة تسجيل الدخول
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
@@ -95,17 +114,16 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 16),
 
-              // 6. زرار Sign Up (أسود/رمادي غامق)
+              // 6. زرار Sign Up
               ElevatedButton(
                 onPressed: () {
-                  // الانتقال لصفحة إنشاء حساب
                   Navigator.push(
                     context,
                     MaterialPageRoute(builder: (context) => const SignupScreen()),
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.secondary, // اللون الأسود
+                  backgroundColor: AppColors.secondary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
@@ -114,7 +132,7 @@ class WelcomeScreen extends StatelessWidget {
                 child: const Text("Sign Up", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
               ),
 
-              const Spacer(flex: 1), // مسافة تحت خالص
+              const Spacer(flex: 1),
             ],
           ),
         ),

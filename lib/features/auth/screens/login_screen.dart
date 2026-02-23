@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
 import 'signup_screen.dart';
 import 'forgot_password_screen.dart';
-import '../../home/screens/main_layout.dart'; // استدعاء الشاشة الرئيسية
+import '../../home/screens/main_layout.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -30,14 +30,35 @@ class _LoginScreenState extends State<LoginScreen> {
         title: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Image.asset('assets/images/logo.png', height: 30),
+            // التعديل هنا: كبرنا اللوجو
+            Image.asset('assets/images/logo.png', height: 40),
             const SizedBox(width: 8),
-            const Text(
-              "GEAR UP",
-              style: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
+            // التعديل هنا: نفس ستايل التدرج اللوني والفخامة بتاع الـ Welcome Screen
+            ShaderMask(
+              blendMode: BlendMode.srcIn,
+              shaderCallback: (bounds) => const LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  Color(0xFF2E86AB),
+                  Color(0xFF0A3656),
+                ],
+              ).createShader(bounds),
+              child: Text(
+                "GEAR UP",
+                style: TextStyle(
+                  fontSize: 26, // حجم مثالي للـ AppBar
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                      color: Colors.black.withOpacity(0.2),
+                      offset: const Offset(0, 2),
+                      blurRadius: 4,
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -106,7 +127,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 24),
 
-            // زرار الدخول الأساسي
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
@@ -135,7 +155,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
             const SizedBox(height: 24),
 
-            // زراير السوشيال ميديا
             Row(
               children: [
                 Expanded(child: _buildSocialButton('assets/images/google.png', "Google")),
@@ -167,11 +186,9 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // دالة بناء أزرار السوشيال ميديا (تم التعديل لتفعيل الانتقال)
   Widget _buildSocialButton(String iconPath, String label) {
     return OutlinedButton.icon(
       onPressed: () {
-        // التعديل هنا: الانتقال للشاشة الرئيسية عند الضغط
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const MainLayout()),
