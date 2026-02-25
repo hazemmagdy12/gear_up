@@ -5,6 +5,7 @@ import '../widgets/ai_chat_bottom_sheet.dart';
 import '../../compare/screens/compare_screen.dart';
 import '../../parts/screens/parts_screen.dart';
 import '../../my_car/screens/my_car_screen.dart';
+import '../../profile/screens/profile_screen.dart'; // 1. استدعاء شاشة البروفايل
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -30,7 +31,7 @@ class _MainLayoutState extends State<MainLayout> {
     const CompareScreen(),
     const PartsScreen(),
     const MyCarScreen(),
-    const Center(child: Text("Profile Screen", style: TextStyle(fontSize: 20))),
+    const ProfileScreen(), // 2. التعديل هنا: شاشة البروفايل الحقيقية
   ];
 
   @override

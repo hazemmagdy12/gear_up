@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
 import 'reminders_screen.dart';
 import '../../nearby/screens/nearby_locations_screen.dart';
+import '../../home/widgets/ai_chat_bottom_sheet.dart'; // استدعاء الذكاء الاصطناعي
 
 class MyCarScreen extends StatefulWidget {
   const MyCarScreen({super.key});
@@ -20,6 +21,21 @@ class _MyCarScreenState extends State<MyCarScreen> {
       body: SafeArea(
         child: isLoggedIn ? _buildLoggedInState() : _buildUnloggedState(),
       ),
+      // زرار الذكاء الاصطناعي
+      floatingActionButton: isLoggedIn ? FloatingActionButton(
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const AiChatBottomSheet(),
+          );
+        },
+        backgroundColor: AppColors.primary,
+        elevation: 8,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.auto_awesome, color: Colors.white, size: 28),
+      ) : null,
     );
   }
 
@@ -260,7 +276,6 @@ class _MyCarScreenState extends State<MyCarScreen> {
     );
   }
 
-  // التعديل: تكبير الكارت وإضافة ظلال ونصوص احترافية
   Widget _buildMyVehicleCard() {
     return Container(
       padding: const EdgeInsets.all(24),
@@ -321,7 +336,6 @@ class _MyCarScreenState extends State<MyCarScreen> {
     );
   }
 
-  // التعديل: استبدال LinearProgressIndicator العادي بشريط احترافي مضيء
   Widget _buildReminderCard({
     required String title,
     required String date,
