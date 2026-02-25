@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../home/widgets/ai_chat_bottom_sheet.dart'; // استدعاء شات الذكاء الاصطناعي
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -30,80 +31,86 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Change Password", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+            const Text("Change Password", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.black87)),
             const SizedBox(height: 8),
             const Text("Update your account password", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
-            const SizedBox(height: 32),
+            const SizedBox(height: 40),
 
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFEEEEEE)),
-                boxShadow: [
-                  BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4)),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildPasswordField("Current Password", _currentPasswordController),
-                  const SizedBox(height: 20),
-                  _buildPasswordField("New Password", _newPasswordController),
-                  const SizedBox(height: 20),
-                  _buildPasswordField("Confirm New Password", _confirmPasswordController),
-                  const SizedBox(height: 32),
-                  SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        // كود حفظ الباسورد
-                        Navigator.pop(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                      child: const Text("Update Password", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                    ),
-                  ),
-                ],
+            // حقول إدخال الباسورد بتصميم Premium
+            _buildPasswordField("Current Password", _currentPasswordController),
+            const SizedBox(height: 24),
+            _buildPasswordField("New Password", _newPasswordController),
+            const SizedBox(height: 24),
+            _buildPasswordField("Confirm New Password", _confirmPasswordController),
+            const SizedBox(height: 48),
+
+            // زرار التحديث الفخم
+            GestureDetector(
+              onTap: () {
+                // كود حفظ الباسورد
+                Navigator.pop(context);
+              },
+              child: Container(
+                padding: const EdgeInsets.symmetric(vertical: 18),
+                decoration: BoxDecoration(
+                  color: AppColors.primary,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 12, offset: const Offset(0, 6)),
+                  ],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Text("Update Password", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 0.5)),
+                  ],
+                ),
               ),
             ),
           ],
         ),
       ),
-      // زرار الشات العائم
+      // زرار الذكاء الاصطناعي الموحد
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const AiChatBottomSheet(),
+          );
+        },
         backgroundColor: AppColors.primary,
-        child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+        elevation: 8,
+        shape: const CircleBorder(),
+        child: const Icon(Icons.auto_awesome, color: Colors.white, size: 28),
       ),
     );
   }
 
+  // دالة مساعدة لرسم حقول الباسورد
   Widget _buildPasswordField(String label, TextEditingController controller) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-        const SizedBox(height: 8),
+        Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Colors.black87)),
+        const SizedBox(height: 10),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFF5F6F8),
-            borderRadius: BorderRadius.circular(12),
+            color: const Color(0xFFF8F9FA),
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: const Color(0xFFEEEEEE)),
           ),
           child: TextField(
             controller: controller,
             obscureText: true,
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
             decoration: const InputDecoration(
               hintText: "••••••••",
-              hintStyle: TextStyle(color: AppColors.textHint),
-              prefixIcon: Icon(Icons.lock_outline, color: AppColors.textHint, size: 20),
+              hintStyle: TextStyle(color: AppColors.textHint, letterSpacing: 2.0),
+              prefixIcon: Icon(Icons.lock_outline, color: AppColors.textHint, size: 22),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 16),
+              contentPadding: EdgeInsets.symmetric(vertical: 18),
             ),
           ),
         ),

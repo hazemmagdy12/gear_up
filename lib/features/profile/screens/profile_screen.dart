@@ -22,10 +22,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA), // خلفية أغمق سنة عشان الكروت البيضا تنور
+      backgroundColor: const Color(0xFFF8F9FA),
       body: SafeArea(
         child: isLoggedIn ? _buildLoggedInProfile() : _buildUnloggedProfile(),
       ),
+      // مفيش FloatingActionButton هنا عشان ميتداخلش مع البار السفلي
     );
   }
 
@@ -35,49 +36,57 @@ class _ProfileScreenState extends State<ProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // كارت بيانات المستخدم بتصميم فخم
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              gradient: const LinearGradient(
-                colors: [AppColors.primary, Color(0xFF1E3A8A)], // تدرج أزرق فخم
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AccountInformationScreen())
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: const LinearGradient(
+                  colors: [AppColors.primary, Color(0xFF1E3A8A)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8)),
+                ],
               ),
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8)),
-              ],
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 75,
-                  height: 75,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: Colors.white, width: 3),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+              child: Row(
+                children: [
+                  Container(
+                    width: 75,
+                    height: 75,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      border: Border.all(color: Colors.white, width: 3),
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+                    ),
+                    child: const Center(
+                      child: Text("SA", style: TextStyle(color: AppColors.primary, fontSize: 26, fontWeight: FontWeight.w900)),
+                    ),
                   ),
-                  child: const Center(
-                    child: Text("SA", style: TextStyle(color: AppColors.primary, fontSize: 26, fontWeight: FontWeight.w900)),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text("safds", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
+                        SizedBox(height: 6),
+                        Text("safds@sg", style: TextStyle(color: Colors.white70, fontSize: 14)),
+                        SizedBox(height: 4),
+                        Text("+20 123 456 7890", style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500)),
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 20),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text("safds", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-                      SizedBox(height: 6),
-                      Text("safds@sg", style: TextStyle(color: Colors.white70, fontSize: 14)),
-                      SizedBox(height: 4),
-                      Text("+20 123 456 7890", style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500)),
-                    ],
-                  ),
-                ),
-              ],
+                  const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 32),
@@ -86,7 +95,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: Text("My Account", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.black87)),
           ),
 
-          // القائمة (بدون Help/Privacy)
           _buildMenuCard(
             title: "Start Selling", subtitle: "List a new item", icon: Icons.attach_money_outlined, iconColor: const Color(0xFF2E7D32),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const StartSellingScreen())),
@@ -103,10 +111,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             title: "Edit Profile", subtitle: "Update your information", icon: Icons.edit_outlined, iconColor: const Color(0xFF0097A7),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen())),
           ),
-          _buildMenuCard(
-            title: "My Car", subtitle: "Manage your vehicles", icon: Icons.directions_car_outlined, iconColor: const Color(0xFF512DA8),
-            onTap: () {},
-          ),
+          // تم إزالة كارت My Car من هنا نهائياً
           _buildMenuCard(
             title: "Payments", subtitle: "Manage Payment Methods", icon: Icons.credit_card_outlined, iconColor: const Color(0xFF388E3C),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentsScreen())),
@@ -124,13 +129,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
           const SizedBox(height: 24),
 
-          // زرار تسجيل الخروج الأحمر
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () {
-                // كود تسجيل الخروج
-              },
+              onPressed: () {},
               icon: const Icon(Icons.logout, color: Colors.white, size: 22),
               label: const Text("Logout", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1.0)),
               style: ElevatedButton.styleFrom(

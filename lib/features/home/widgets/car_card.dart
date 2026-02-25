@@ -30,6 +30,7 @@ class CarCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => CarDetailsScreen(
+              // التعديل هنا: بعتنا كل المتغيرات المطلوبة بما فيها حالة الترويج
               brand: brand,
               model: model,
               price: price,
@@ -40,43 +41,44 @@ class CarCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 280, // التعديل هنا: كبرنا العرض
-        margin: const EdgeInsets.only(right: 16),
+        width: 280, // العرض الكبير
+        margin: const EdgeInsets.only(right: 20), // مسافة أوسع بين الكروت
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(24), // حواف ناعمة وفخمة
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+              color: isPromoted ? const Color(0xFFF39C12).withOpacity(0.15) : Colors.black.withOpacity(0.06),
+              blurRadius: 15,
+              offset: const Offset(0, 8),
             ),
           ],
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // قسم الصورة
             Stack(
               children: [
                 Container(
-                  height: 180, // التعديل هنا: كبرنا مساحة الصورة
+                  height: 200, // كبرنا مساحة الصورة بشكل ملحوظ
                   decoration: const BoxDecoration(
                     color: AppColors.surface,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: const Center(
-                    child: Icon(Icons.directions_car, size: 70, color: AppColors.textHint), // كبرنا الأيقونة
+                    child: Icon(Icons.directions_car, size: 90, color: AppColors.textHint), // أيقونة ضخمة
                   ),
                 ),
                 if (isTopRated)
                   Positioned(
-                    top: 12,
-                    left: 12,
+                    top: 16,
+                    left: 16,
                     child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: AppColors.primary,
-                        borderRadius: BorderRadius.circular(8),
+                        color: AppColors.secondary,
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
                         children: const [
@@ -88,53 +90,61 @@ class CarCard extends StatelessWidget {
                     ),
                   ),
                 Positioned(
-                  top: 12,
-                  right: 12,
+                  top: 16,
+                  right: 16,
                   child: Column(
                     children: [
                       _buildIconButton(Icons.favorite_border),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 12),
                       _buildIconButton(Icons.compare_arrows),
                     ],
                   ),
                 ),
               ],
             ),
+            // قسم النصوص
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.all(20.0), // مسافات داخلية مريحة
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(brand, style: const TextStyle(color: AppColors.textHint, fontSize: 14)), // كبرنا الفونت
-                  const SizedBox(height: 4),
+                  // اسم البراند بستايل راقي
+                  Text(brand.toUpperCase(), style: const TextStyle(color: AppColors.textHint, fontSize: 13, letterSpacing: 1.2, fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(model, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20)), // كبرنا الموديل
+                      Expanded(
+                        child: Text(
+                          model,
+                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.black87), // خط ضخم للموديل
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                       const Icon(Icons.chevron_right, color: AppColors.textHint, size: 24),
                     ],
                   ),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(year, style: const TextStyle(color: AppColors.textSecondary, fontSize: 16)),
+                      Text(year, style: const TextStyle(color: AppColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w500)),
                       Row(
                         children: [
-                          const Icon(Icons.star, color: Colors.amber, size: 18),
+                          const Icon(Icons.star, color: Colors.orange, size: 18),
                           const SizedBox(width: 4),
-                          Text(rating, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                          Text(rating, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
                         ],
                       ),
                     ],
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 20),
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 18)), // كبرنا السعر
-                      const SizedBox(width: 4),
-                      const Text("Average price", style: TextStyle(color: AppColors.textHint, fontSize: 12)),
+                      Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900, fontSize: 20)), // سعر بارز
+                      const SizedBox(width: 6),
+                      const Text("Average price", style: TextStyle(color: AppColors.textHint, fontSize: 12, fontWeight: FontWeight.w500)),
                     ],
                   ),
                 ],
@@ -146,12 +156,14 @@ class CarCard extends StatelessWidget {
     );
   }
 
+  // دالة زراير الأكشن
   Widget _buildIconButton(IconData icon) {
     return Container(
-      padding: const EdgeInsets.all(8), // كبرنا زرار القلب والمقارنة شوية
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white,
         shape: BoxShape.circle,
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5, offset: const Offset(0, 2))],
       ),
       child: Icon(icon, size: 20, color: AppColors.secondary),
     );

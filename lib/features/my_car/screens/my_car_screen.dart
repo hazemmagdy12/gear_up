@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
 import 'reminders_screen.dart';
 import '../../nearby/screens/nearby_locations_screen.dart';
-import '../../home/widgets/ai_chat_bottom_sheet.dart'; // استدعاء الذكاء الاصطناعي
+import 'edit_my_car_screen.dart'; // 1. استدعاء شاشة تعديل بيانات السيارة
 
 class MyCarScreen extends StatefulWidget {
   const MyCarScreen({super.key});
@@ -21,21 +21,6 @@ class _MyCarScreenState extends State<MyCarScreen> {
       body: SafeArea(
         child: isLoggedIn ? _buildLoggedInState() : _buildUnloggedState(),
       ),
-      // زرار الذكاء الاصطناعي
-      floatingActionButton: isLoggedIn ? FloatingActionButton(
-        onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) => const AiChatBottomSheet(),
-          );
-        },
-        backgroundColor: AppColors.primary,
-        elevation: 8,
-        shape: const CircleBorder(),
-        child: const Icon(Icons.auto_awesome, color: Colors.white, size: 28),
-      ) : null,
     );
   }
 
@@ -130,7 +115,7 @@ class _MyCarScreenState extends State<MyCarScreen> {
           // قسم: بيانات العربية
           _buildSectionHeader(title: "My Vehicle"),
           const SizedBox(height: 16),
-          _buildMyVehicleCard(),
+          _buildMyVehicleCard(), // الكارت المعدل
           const SizedBox(height: 32),
 
           // قسم: التذكيرات القادمة
@@ -151,7 +136,7 @@ class _MyCarScreenState extends State<MyCarScreen> {
             date: "2025-11-15",
             daysLeft: "-100 days",
             progress: 0.3,
-            progressGradient: [AppColors.primary, const Color(0xFF4FC3F7)], // تدرج أزرق
+            progressGradient: [AppColors.primary, const Color(0xFF4FC3F7)],
             glowColor: AppColors.primary,
             onTap: () => _showEditReminderDialog("Oil Change", "2025-11-15"),
           ),
@@ -160,7 +145,7 @@ class _MyCarScreenState extends State<MyCarScreen> {
             date: "2025-12-20",
             daysLeft: "-65 days",
             progress: 0.8,
-            progressGradient: [const Color(0xFFD32F2F), const Color(0xFFFF5252)], // تدرج أحمر
+            progressGradient: [const Color(0xFFD32F2F), const Color(0xFFFF5252)],
             glowColor: Colors.redAccent,
             onTap: () => _showEditReminderDialog("Tire Rotation", "2025-12-20"),
           ),
@@ -276,62 +261,85 @@ class _MyCarScreenState extends State<MyCarScreen> {
     );
   }
 
+  // 2. التعديل: تغليف الكارت بـ GestureDetector للذهاب لشاشة Edit My Car
   Widget _buildMyVehicleCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 15, offset: const Offset(0, 8))
-        ],
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: _showCarImageFullScreen,
-            child: Container(
-              width: 120, // تكبير مساحة الصورة
-              height: 100,
-              decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16)),
-              child: const Center(child: Icon(Icons.directions_car, size: 50, color: AppColors.textHint)),
-            ),
-          ),
-          const SizedBox(width: 20),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(context, MaterialPageRoute(builder: (context) => const EditMyCarScreen()));
+      },
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(color: const Color(0xFFEEEEEE)),
+          boxShadow: [
+            BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 15, offset: const Offset(0, 8))
+          ],
+        ),
+        child: Stack(
+          children: [
+            Row(
               children: [
-                const Text("TOYOTA", style: TextStyle(color: AppColors.textHint, fontSize: 12, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 4),
-                const Text("Corolla", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24)),
-                const SizedBox(height: 12),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text("Year", style: TextStyle(color: AppColors.textHint, fontSize: 12)),
-                        SizedBox(height: 2),
-                        Text("2020", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text("Mileage", style: TextStyle(color: AppColors.textHint, fontSize: 12)),
-                        SizedBox(height: 2),
-                        Text("45,000 km", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
-                      ],
-                    ),
-                  ],
+                GestureDetector(
+                  onTap: _showCarImageFullScreen,
+                  child: Container(
+                    width: 120, // تكبير مساحة الصورة
+                    height: 100,
+                    decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(16)),
+                    child: const Center(child: Icon(Icons.directions_car, size: 50, color: AppColors.textHint)),
+                  ),
+                ),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text("TOYOTA", style: TextStyle(color: AppColors.textHint, fontSize: 12, letterSpacing: 1.5, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      const Text("Corolla", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 24)),
+                      const SizedBox(height: 12),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("Year", style: TextStyle(color: AppColors.textHint, fontSize: 12)),
+                              SizedBox(height: 2),
+                              Text("2020", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: const [
+                              Text("Mileage", style: TextStyle(color: AppColors.textHint, fontSize: 12)),
+                              SizedBox(height: 2),
+                              Text("45,000 km", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-        ],
+            // أيقونة قلم للتعديل
+            Positioned(
+              top: 0,
+              right: 0,
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.edit, size: 16, color: AppColors.primary),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

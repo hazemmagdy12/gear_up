@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../home/widgets/ai_chat_bottom_sheet.dart'; // 1. استدعاء شات الذكاء الاصطناعي
 
 class HelpCenterScreen extends StatefulWidget {
   const HelpCenterScreen({super.key});
@@ -191,9 +192,16 @@ class _HelpCenterScreenState extends State<HelpCenterScreen> {
           ],
         ),
       ),
-      // تعديل زرار الـ AI الفخم
+      // 2. تفعيل زرار الذكاء الاصطناعي لفتح الـ Bottom Sheet
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) => const AiChatBottomSheet(),
+          );
+        },
         backgroundColor: AppColors.primary,
         elevation: 8,
         shape: const CircleBorder(),

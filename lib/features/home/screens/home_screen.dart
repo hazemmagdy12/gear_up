@@ -14,7 +14,7 @@ class HomeScreen extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 24.0), // ظبطت المسافات العلوية
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -22,10 +22,10 @@ class HomeScreen extends StatelessWidget {
               const SizedBox(height: 24),
 
               _buildQuickActions(context),
-              const SizedBox(height: 32),
+              const SizedBox(height: 36),
 
               _buildPromotedSection(),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
 
               _buildSectionWrapper(
                 title: "Top Rated New Cars",
@@ -34,17 +34,17 @@ class HomeScreen extends StatelessWidget {
                 bgColor: const Color(0xFFF0F4FF),
                 content: _buildCarList(),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
 
-              // قسم الأخبار بعد التعديل
+              // قسم الأخبار بعد التكبير والفخامة
               _buildSectionWrapper(
-                title: "News",
-                subtitle: "Latest news and updates",
+                title: "News & Insights",
+                subtitle: "Latest automotive updates",
                 actionText: "View More",
                 bgColor: const Color(0xFFF8F9FA),
                 content: _buildNewsList(),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
 
               _buildSectionWrapper(
                 title: "New Cars",
@@ -53,7 +53,7 @@ class HomeScreen extends StatelessWidget {
                 bgColor: const Color(0xFFEEF2F5),
                 content: _buildCarList(),
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 28),
 
               _buildSectionWrapper(
                 title: "Used Cars",
@@ -63,7 +63,7 @@ class HomeScreen extends StatelessWidget {
                 content: _buildCarList(),
               ),
 
-              const SizedBox(height: 80),
+              const SizedBox(height: 100),
             ],
           ),
         ),
@@ -79,10 +79,10 @@ class HomeScreen extends StatelessWidget {
     Color bgColor = const Color(0xFFF4F8FF),
   }) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20), // مساحة داخلية أوسع
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28), // حواف ناعمة جداً
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -94,9 +94,9 @@ class HomeScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.secondary)),
+                  Text(title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: AppColors.secondary)),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(fontSize: 14, color: AppColors.textSecondary)),
+                  Text(subtitle, style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, fontWeight: FontWeight.w500)),
                 ],
               ),
               if (actionText != null)
@@ -109,7 +109,7 @@ class HomeScreen extends StatelessWidget {
                 ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 24),
           content,
         ],
       ),
@@ -118,10 +118,10 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildPromotedSection() {
     return Container(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: const Color(0xFFFFF9E6),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -133,16 +133,16 @@ class HomeScreen extends StatelessWidget {
                 children: [
                   const Text(
                     "Promoted",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Color(0xFFD35400)),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFFD35400)),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 12),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF39C12),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text("Featured Listings", style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                    child: const Text("Featured Listings", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -156,8 +156,8 @@ class HomeScreen extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 4),
-          const Text("Premium featured listings", style: TextStyle(fontSize: 14, color: AppColors.textSecondary)),
-          const SizedBox(height: 16),
+          const Text("Premium featured listings", style: TextStyle(fontSize: 14, color: AppColors.textSecondary, fontWeight: FontWeight.w500)),
+          const SizedBox(height: 24),
 
           _buildCarList(isPromotedSection: true),
         ],
@@ -165,10 +165,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  // التعديل هنا: زودنا ارتفاع اللستة عشان الكارت الجديد ياخد مساحته براحته
+  // التعديل: تكبير قسم الأخبار بشكل ملحوظ
   Widget _buildNewsList() {
     return SizedBox(
-      height: 380,
+      height: 420, // ارتفاع كبير عشان الكارت يبان فخم
       child: ListView(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
@@ -176,51 +176,56 @@ class HomeScreen extends StatelessWidget {
           _buildNewsCard(
             date: "Oct 20, 2025",
             title: "Toyota Unveils All-New 2025 Camry Hybrid",
-            desc: "Toyota introduces the next generation of its popular sedan with enhanced fuel efficiency and a sleek new exterior design.",
+            desc: "Toyota introduces the next generation of its popular sedan with enhanced fuel efficiency, a sleek new exterior design, and an upgraded tech interior.",
           ),
           _buildNewsCard(
             date: "Oct 18, 2025",
             title: "BMW X5 Facelift Revealed for 2025",
-            desc: "The new BMW X5 comes with updated tech, a sharper exterior design, and improved powertrain options for 2025.",
+            desc: "The new BMW X5 comes with updated tech, a sharper exterior design, and improved powertrain options for 2025 to lead the luxury SUV market.",
           ),
         ],
       ),
     );
   }
 
-  // التعديل هنا: كبرنا الكارت ومساحة الصورة والخطوط
+  // التعديل: كارت أخبار بريميوم بصورة كبيرة
   Widget _buildNewsCard({required String date, required String title, required String desc}) {
     return Container(
-      width: 320, // كبرنا عرض الكارت
-      margin: const EdgeInsets.only(right: 16),
+      width: 340, // عرض كبير جداً
+      margin: const EdgeInsets.only(right: 20),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(20), // حواف أنعم
+        borderRadius: BorderRadius.circular(24),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 12, offset: const Offset(0, 6)),
+          BoxShadow(color: Colors.black.withOpacity(0.06), blurRadius: 15, offset: const Offset(0, 8)),
         ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // مساحة الصورة بقت عملاقة
           Container(
-            height: 160, // كبرنا مساحة الصورة
+            height: 200,
             decoration: const BoxDecoration(
               color: AppColors.surface,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             ),
-            child: const Center(child: Icon(Icons.article_outlined, size: 50, color: AppColors.textHint)),
+            child: const Center(child: Icon(Icons.newspaper_rounded, size: 70, color: AppColors.textHint)),
           ),
           Padding(
-            padding: const EdgeInsets.all(20.0), // زودنا المسافات الداخلية
+            padding: const EdgeInsets.all(24.0), // مسافات داخلية محترمة
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(date, style: const TextStyle(color: AppColors.textHint, fontSize: 13)),
-                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  decoration: BoxDecoration(color: AppColors.surface, borderRadius: BorderRadius.circular(8)),
+                  child: Text(date, style: const TextStyle(color: AppColors.primary, fontSize: 12, fontWeight: FontWeight.bold)),
+                ),
+                const SizedBox(height: 16),
                 Text(
                     title,
-                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18, height: 1.3),
+                    style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 20, height: 1.3, color: Colors.black87),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis
                 ),
@@ -228,7 +233,7 @@ class HomeScreen extends StatelessWidget {
                 Text(
                     desc,
                     style: const TextStyle(color: AppColors.textSecondary, fontSize: 14, height: 1.5),
-                    maxLines: 3, // سمحنا للمحتوى ياخد 3 سطور
+                    maxLines: 3,
                     overflow: TextOverflow.ellipsis
                 ),
               ],
@@ -239,9 +244,10 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  // التعديل: تزويد مساحة اللستة الخاصة بكروت العربيات عشان تاخد التكبير الجديد
   Widget _buildCarList({bool isPromotedSection = false}) {
     return SizedBox(
-      height: 340,
+      height: 380, // زودنا الارتفاع هنا عشان الكارت الجديد أكبر
       child: ListView(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
@@ -282,9 +288,9 @@ class HomeScreen extends StatelessWidget {
     return Row(
       children: [
         Container(
-          padding: const EdgeInsets.all(8),
-          decoration: BoxDecoration(border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(12)),
-          child: Image.asset('assets/images/logo.png', height: 24, width: 24),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(14)),
+          child: Image.asset('assets/images/logo.png', height: 26, width: 26),
         ),
         const SizedBox(width: 12),
 
@@ -302,13 +308,13 @@ class HomeScreen extends StatelessWidget {
             },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
-              height: 48,
+              height: 52,
               decoration: BoxDecoration(color: Colors.white, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(24)),
               child: Row(
                 children: const [
-                  Icon(Icons.search, color: AppColors.textHint),
+                  Icon(Icons.search, color: AppColors.textHint, size: 22),
                   SizedBox(width: 8),
-                  Text("Search cars...", style: TextStyle(color: AppColors.textHint)),
+                  Text("Search cars...", style: TextStyle(color: AppColors.textHint, fontSize: 15)),
                 ],
               ),
             ),
@@ -326,8 +332,8 @@ class HomeScreen extends StatelessWidget {
             );
           },
           child: Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: AppColors.secondary, borderRadius: BorderRadius.circular(12)),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(color: AppColors.secondary, borderRadius: BorderRadius.circular(14)),
             child: const Icon(Icons.tune, color: Colors.white, size: 24),
           ),
         ),
@@ -342,7 +348,7 @@ class HomeScreen extends StatelessWidget {
         _buildActionCard(
           title: "Saved Cars",
           icon: Icons.favorite_border,
-          iconColor: Colors.black,
+          iconColor: Colors.black87,
           onTap: () {},
         ),
         _buildActionCard(
@@ -354,7 +360,7 @@ class HomeScreen extends StatelessWidget {
         _buildActionCard(
           title: "Find Nearby",
           icon: Icons.location_on_outlined,
-          iconColor: const Color(0xFFE57373), // الأحمر الهادي اللي اتفقنا عليه
+          iconColor: const Color(0xFFE57373),
           onTap: () {
             Navigator.push(context, MaterialPageRoute(builder: (context) => const NearbyLocationsScreen()));
           },
@@ -368,17 +374,17 @@ class HomeScreen extends StatelessWidget {
       child: GestureDetector(
         onTap: onTap,
         child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 4),
-          padding: const EdgeInsets.symmetric(vertical: 16),
+          margin: const EdgeInsets.symmetric(horizontal: 6),
+          padding: const EdgeInsets.symmetric(vertical: 18),
           decoration: BoxDecoration(
-            color: Colors.white, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 4, offset: const Offset(0, 2))],
+            color: Colors.white, border: Border.all(color: AppColors.border), borderRadius: BorderRadius.circular(20),
+            boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 6, offset: const Offset(0, 3))],
           ),
           child: Column(
             children: [
-              Icon(icon, color: iconColor, size: 28),
-              const SizedBox(height: 8),
-              Text(title, style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+              Icon(icon, color: iconColor, size: 30),
+              const SizedBox(height: 10),
+              Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87), textAlign: TextAlign.center),
             ],
           ),
         ),
