@@ -24,13 +24,15 @@ class CarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // السطر ده بيكتشف إحنا في الدارك ولا اللايت
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
             builder: (context) => CarDetailsScreen(
-              // التعديل هنا: بعتنا كل المتغيرات المطلوبة بما فيها حالة الترويج
               brand: brand,
               model: model,
               price: price,
@@ -41,14 +43,19 @@ class CarCard extends StatelessWidget {
         );
       },
       child: Container(
-        width: 280, // العرض الكبير
-        margin: const EdgeInsets.only(right: 20), // مسافة أوسع بين الكروت
+        width: 280,
+        margin: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24), // حواف ناعمة وفخمة
+          // تغيير لون الكارت بناء على الثيم
+          color: isDark ? AppColors.surfaceDark : Colors.white,
+          borderRadius: BorderRadius.circular(24),
+          // إضافة حد خفيف في الدارك مود عشان الكارت يبان من الخلفية
+          border: Border.all(color: isDark ? AppColors.borderDark : Colors.transparent),
           boxShadow: [
             BoxShadow(
-              color: isPromoted ? const Color(0xFFF39C12).withOpacity(0.15) : Colors.black.withOpacity(0.06),
+              color: isPromoted
+                  ? const Color(0xFFF39C12).withOpacity(isDark ? 0.3 : 0.15)
+                  : Colors.black.withOpacity(isDark ? 0.2 : 0.06),
               blurRadius: 15,
               offset: const Offset(0, 8),
             ),
@@ -57,17 +64,17 @@ class CarCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // قسم الصورة
             Stack(
               children: [
                 Container(
-                  height: 200, // كبرنا مساحة الصورة بشكل ملحوظ
-                  decoration: const BoxDecoration(
-                    color: AppColors.surface,
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+                  height: 200,
+                  decoration: BoxDecoration(
+                    // تغيير لون خلفية الصورة
+                    color: isDark ? const Color(0xFF2A2A2A) : AppColors.surfaceLight,
+                    borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
                   ),
                   child: const Center(
-                    child: Icon(Icons.directions_car, size: 90, color: AppColors.textHint), // أيقونة ضخمة
+                    child: Icon(Icons.directions_car, size: 90, color: AppColors.textHint),
                   ),
                 ),
                 if (isTopRated)
@@ -94,21 +101,19 @@ class CarCard extends StatelessWidget {
                   right: 16,
                   child: Column(
                     children: [
-                      _buildIconButton(Icons.favorite_border),
+                      _buildIconButton(Icons.favorite_border, isDark),
                       const SizedBox(height: 12),
-                      _buildIconButton(Icons.compare_arrows),
+                      _buildIconButton(Icons.compare_arrows, isDark),
                     ],
                   ),
                 ),
               ],
             ),
-            // قسم النصوص
             Padding(
-              padding: const EdgeInsets.all(20.0), // مسافات داخلية مريحة
+              padding: const EdgeInsets.all(20.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // اسم البراند بستايل راقي
                   Text(brand.toUpperCase(), style: const TextStyle(color: AppColors.textHint, fontSize: 13, letterSpacing: 1.2, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 6),
                   Row(
@@ -117,7 +122,8 @@ class CarCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           model,
-                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: Colors.black87), // خط ضخم للموديل
+                          // تغيير لون اسم العربية ليتناسب مع الخلفية
+                          style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: isDark ? Colors.white : Colors.black87),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -128,12 +134,12 @@ class CarCard extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(year, style: const TextStyle(color: AppColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w500)),
+                      Text(year, style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 15, fontWeight: FontWeight.w500)),
                       Row(
                         children: [
                           const Icon(Icons.star, color: Colors.orange, size: 18),
                           const SizedBox(width: 4),
-                          Text(rating, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                          Text(rating, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: isDark ? Colors.white : Colors.black87)),
                         ],
                       ),
                     ],
@@ -142,9 +148,9 @@ class CarCard extends StatelessWidget {
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900, fontSize: 20)), // سعر بارز
+                      Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900, fontSize: 20)),
                       const SizedBox(width: 6),
-                      const Text("Average price", style: TextStyle(color: AppColors.textHint, fontSize: 12, fontWeight: FontWeight.w500)),
+                      Text("Average price", style: TextStyle(color: isDark ? Colors.white54 : AppColors.textHint, fontSize: 12, fontWeight: FontWeight.w500)),
                     ],
                   ),
                 ],
@@ -156,16 +162,16 @@ class CarCard extends StatelessWidget {
     );
   }
 
-  // دالة زراير الأكشن
-  Widget _buildIconButton(IconData icon) {
+  // الدالة دي بتاخد isDark عشان تظبط ألوان زراير المفضلة والمقارنة
+  Widget _buildIconButton(IconData icon, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? const Color(0xFF333333) : Colors.white,
         shape: BoxShape.circle,
-        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 5, offset: const Offset(0, 2))],
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.05), blurRadius: 5, offset: const Offset(0, 2))],
       ),
-      child: Icon(icon, size: 20, color: AppColors.secondary),
+      child: Icon(icon, size: 20, color: isDark ? Colors.white : AppColors.secondary),
     );
   }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_bloc/flutter_bloc.dart'; // استدعاء البلوك
 import 'core/theme/app_theme.dart';
-import 'features/intro/screens/splash_screen.dart'; // 1. استدعاء ملف السبلاش
+import 'core/theme/cubit/theme_cubit.dart'; // استدعاء المخ اللي لسه عاملينه
+import 'features/intro/screens/splash_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,11 +16,29 @@ class GearUpApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Gear Up',
-      theme: AppTheme.lightTheme, // الثيم بتاعنا
-      home: const SplashScreen(), // 2. البداية من شاشة اللوجو
+    // 1. غلفنا التطبيق بـ BlocProvider عشان الـ ThemeCubit يكون مقروء في أي شاشة
+    return BlocProvider(
+      create: (context) => ThemeCubit(),
+      // 2. استخدمنا BlocBuilder عشان يتصنت على أي تغيير في الـ ThemeMode
+      child: BlocBuilder<ThemeCubit, ThemeMode>(
+        builder: (context, themeMode) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Gear Up',
+
+            // الثيم الفاتح بتاعنا
+            theme: AppTheme.lightTheme,
+
+            // الثيم الغامق (مؤقتاً هنستخدم الديفولت لحد ما نعملك واحد بريميوم)
+            darkTheme: ThemeData.dark(),
+
+            // هنا بنقول للتطبيق: "اسمع كلام الـ Cubit في تحديد الثيم"
+            themeMode: themeMode,
+
+            home: const SplashScreen(),
+          );
+        },
+      ),
     );
   }
 }
