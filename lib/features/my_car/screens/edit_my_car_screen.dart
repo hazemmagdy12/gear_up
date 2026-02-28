@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
-import '../../home/widgets/ai_chat_bottom_sheet.dart'; // زرار الذكاء الاصطناعي
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
+import '../../home/widgets/ai_chat_bottom_sheet.dart';
 
 class EditMyCarScreen extends StatefulWidget {
   const EditMyCarScreen({super.key});
@@ -10,7 +11,6 @@ class EditMyCarScreen extends StatefulWidget {
 }
 
 class _EditMyCarScreenState extends State<EditMyCarScreen> {
-  // بيانات مبدئية بناءً على الكارت اللي في الصورة
   final TextEditingController _brandController = TextEditingController(text: "TOYOTA");
   final TextEditingController _modelController = TextEditingController(text: "Corolla");
   final TextEditingController _yearController = TextEditingController(text: "2020");
@@ -18,16 +18,18 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text("Edit My Vehicle", style: TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.w900)),
+        title: Text(AppLang.tr(context, 'edit_my_vehicle'), style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 18, fontWeight: FontWeight.w900)),
         centerTitle: true,
       ),
       body: SingleChildScrollView(
@@ -35,12 +37,11 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Vehicle Details", style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.black87)),
+            Text(AppLang.tr(context, 'vehicle_details'), style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
             const SizedBox(height: 4),
-            const Text("Update your car's information and mileage", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+            Text(AppLang.tr(context, 'update_car_info'), style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14)),
             const SizedBox(height: 32),
 
-            // 1. قسم صورة العربية
             Center(
               child: Column(
                 children: [
@@ -51,10 +52,10 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
                         width: 140,
                         height: 100,
                         decoration: BoxDecoration(
-                          color: AppColors.surface,
+                          color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: const Color(0xFFEEEEEE), width: 2),
-                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 5))],
+                          border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE), width: 2),
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.05), blurRadius: 10, offset: const Offset(0, 5))],
                         ),
                         child: const Center(
                           child: Icon(Icons.directions_car, size: 50, color: AppColors.textHint),
@@ -65,35 +66,33 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.primary,
                           shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white, width: 3),
+                          border: Border.all(color: isDark ? AppColors.surfaceDark : Colors.white, width: 3),
                         ),
                         child: const Icon(Icons.camera_alt, color: Colors.white, size: 16),
                       ),
                     ],
                   ),
                   const SizedBox(height: 12),
-                  const Text("Change Vehicle Photo", style: TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.bold)),
+                  Text(AppLang.tr(context, 'change_vehicle_photo'), style: const TextStyle(color: AppColors.primary, fontSize: 14, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
             const SizedBox(height: 40),
 
-            // 2. حقول الإدخال
-            _buildLabelField("Car Brand", Icons.branding_watermark_outlined, _brandController),
+            _buildLabelField(AppLang.tr(context, 'car_brand'), Icons.branding_watermark_outlined, _brandController, isDark),
             const SizedBox(height: 24),
-            _buildLabelField("Car Model", Icons.directions_car_outlined, _modelController),
+            _buildLabelField(AppLang.tr(context, 'car_model'), Icons.directions_car_outlined, _modelController, isDark),
             const SizedBox(height: 24),
 
             Row(
               children: [
-                Expanded(child: _buildLabelField("Manufacturing Year", Icons.calendar_today_outlined, _yearController, isNumber: true)),
+                Expanded(child: _buildLabelField(AppLang.tr(context, 'manufacturing_year'), Icons.calendar_today_outlined, _yearController, isDark, isNumber: true)),
                 const SizedBox(width: 16),
-                Expanded(child: _buildLabelField("Mileage (km)", Icons.speed_outlined, _mileageController, isNumber: true)),
+                Expanded(child: _buildLabelField(AppLang.tr(context, 'mileage_km'), Icons.speed_outlined, _mileageController, isDark, isNumber: true)),
               ],
             ),
             const SizedBox(height: 50),
 
-            // 3. زراير الحفظ والإلغاء
             Row(
               children: [
                 Expanded(
@@ -101,17 +100,16 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
                     onPressed: () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 18),
-                      side: const BorderSide(color: AppColors.border, width: 2),
+                      side: BorderSide(color: isDark ? AppColors.borderDark : AppColors.borderLight, width: 2),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                     ),
-                    child: const Text("Cancel", style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
+                    child: Text(AppLang.tr(context, 'cancel'), style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      // هنا كود حفظ البيانات الجديدة
                       Navigator.pop(context);
                     },
                     style: ElevatedButton.styleFrom(
@@ -121,7 +119,7 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
                       shadowColor: AppColors.primary.withOpacity(0.5),
                     ),
-                    child: const Text("Save Changes", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                    child: Text(AppLang.tr(context, 'save_changes'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
                 ),
               ],
@@ -129,7 +127,6 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
           ],
         ),
       ),
-      // زرار الذكاء الاصطناعي الموحد
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -147,8 +144,7 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
     );
   }
 
-  // دالة مساعدة لبناء حقول الإدخال الفخمة
-  Widget _buildLabelField(String label, IconData icon, TextEditingController controller, {bool isNumber = false}) {
+  Widget _buildLabelField(String label, IconData icon, TextEditingController controller, bool isDark, {bool isNumber = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -156,20 +152,20 @@ class _EditMyCarScreenState extends State<EditMyCarScreen> {
           children: [
             Icon(icon, size: 20, color: AppColors.primary),
             const SizedBox(width: 8),
-            Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Colors.black87)),
+            Text(label, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
           ],
         ),
         const SizedBox(height: 10),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFF8F9FA),
+            color: isDark ? const Color(0xFF1E1E1E) : AppColors.surfaceLight,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFEEEEEE)),
+            border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
           ),
           child: TextField(
             controller: controller,
             keyboardType: isNumber ? TextInputType.number : TextInputType.text,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: isDark ? Colors.white : Colors.black87),
             decoration: const InputDecoration(
               border: InputBorder.none,
               contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 16),

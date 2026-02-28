@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart';
 import '../widgets/car_card.dart';
 import '../widgets/filters_bottom_sheet.dart';
 import 'search_screen.dart';
+import 'view_all_cars_screen.dart'; // استدعاء الشاشة الجديدة
 import '../../nearby/screens/nearby_locations_screen.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -10,11 +12,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // السطر ده هو السحر: بيعرف إحنا شغالين دارك ولا لايت مود
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // بيسحب لون الخلفية من الـ Theme تلقائي
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: SingleChildScrollView(
@@ -28,47 +28,62 @@ class HomeScreen extends StatelessWidget {
               _buildQuickActions(context, isDark),
               const SizedBox(height: 36),
 
-              _buildPromotedSection(isDark),
+              _buildPromotedSection(context, isDark),
               const SizedBox(height: 28),
 
               _buildSectionWrapper(
+                context: context,
                 isDark: isDark,
-                title: "Top Rated New Cars",
-                subtitle: "Best rated vehicles in 2025",
-                actionText: "View More",
-                // ألوان مختلفة تتناسب مع الدارك مود
+                title: AppLang.tr(context, 'top_rated_new'),
+                subtitle: AppLang.tr(context, 'best_rated_2025'),
+                actionText: AppLang.tr(context, 'view_more'),
                 bgColor: isDark ? const Color(0xFF1A2235) : const Color(0xFFF0F4FF),
                 content: _buildCarList(),
+                onViewMore: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ViewAllCarsScreen(title: AppLang.tr(context, 'top_rated_new'))));
+                },
               ),
               const SizedBox(height: 28),
 
               _buildSectionWrapper(
+                context: context,
                 isDark: isDark,
-                title: "News & Insights",
-                subtitle: "Latest automotive updates",
-                actionText: "View More",
+                title: AppLang.tr(context, 'news_insights'),
+                subtitle: AppLang.tr(context, 'latest_updates'),
+                actionText: AppLang.tr(context, 'view_more'),
                 bgColor: isDark ? AppColors.surfaceDark : const Color(0xFFF8F9FA),
                 content: _buildNewsList(isDark),
+                onViewMore: () {
+                  // مؤقتاً لحد ما نعمل شاشة للأخبار
+                },
               ),
               const SizedBox(height: 28),
 
               _buildSectionWrapper(
+                context: context,
                 isDark: isDark,
-                title: "New Cars",
-                subtitle: "Latest models from top brands",
-                actionText: "View More",
+                title: AppLang.tr(context, 'new_cars'),
+                subtitle: AppLang.tr(context, 'latest_models'),
+                actionText: AppLang.tr(context, 'view_more'),
                 bgColor: isDark ? const Color(0xFF1E262B) : const Color(0xFFEEF2F5),
                 content: _buildCarList(),
+                onViewMore: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ViewAllCarsScreen(title: AppLang.tr(context, 'new_cars'))));
+                },
               ),
               const SizedBox(height: 28),
 
               _buildSectionWrapper(
+                context: context,
                 isDark: isDark,
-                title: "Used Cars",
-                subtitle: "Quality pre-owned vehicles",
-                actionText: "View More",
+                title: AppLang.tr(context, 'used_cars'),
+                subtitle: AppLang.tr(context, 'quality_preowned'),
+                actionText: AppLang.tr(context, 'view_more'),
                 bgColor: isDark ? const Color(0xFF222222) : const Color(0xFFF5F6F8),
                 content: _buildCarList(),
+                onViewMore: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ViewAllCarsScreen(title: AppLang.tr(context, 'used_cars'))));
+                },
               ),
 
               const SizedBox(height: 100),
@@ -80,12 +95,14 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildSectionWrapper({
+    required BuildContext context,
     required bool isDark,
     required String title,
     required String subtitle,
     required Widget content,
     String? actionText,
     required Color bgColor,
+    VoidCallback? onViewMore, // إضافة بارامتر الكليك
   }) {
     return Container(
       padding: const EdgeInsets.all(20),
@@ -100,21 +117,30 @@ class HomeScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : AppColors.secondary)),
-                  const SizedBox(height: 4),
-                  Text(subtitle, style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : AppColors.textSecondary, fontWeight: FontWeight.w500)),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(title, style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : AppColors.secondary)),
+                    const SizedBox(height: 4),
+                    Text(subtitle, style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : AppColors.textSecondary, fontWeight: FontWeight.w500)),
+                  ],
+                ),
               ),
               if (actionText != null)
-                Row(
-                  children: [
-                    Text(actionText, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? AppColors.primary : AppColors.secondary, fontSize: 13)),
-                    const SizedBox(width: 4),
-                    Icon(Icons.arrow_forward_ios, color: isDark ? AppColors.primary : AppColors.secondary, size: 12),
-                  ],
+                GestureDetector(
+                  onTap: onViewMore, // تفعيل الكليك
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                    color: Colors.transparent, // عشان الكليك يسمع في المساحة كلها
+                    child: Row(
+                      children: [
+                        Text(actionText, style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? AppColors.primary : AppColors.secondary, fontSize: 13)),
+                        const SizedBox(width: 4),
+                        Icon(Icons.arrow_forward_ios, color: isDark ? AppColors.primary : AppColors.secondary, size: 12),
+                      ],
+                    ),
+                  ),
                 ),
             ],
           ),
@@ -125,11 +151,11 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildPromotedSection(bool isDark) {
+  Widget _buildPromotedSection(BuildContext context, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF332B1A) : const Color(0xFFFFF9E6), // لون غامق يناسب البروموتيد
+        color: isDark ? const Color(0xFF2C2416) : const Color(0xFFFFF9E6),
         borderRadius: BorderRadius.circular(28),
       ),
       child: Column(
@@ -140,32 +166,52 @@ class HomeScreen extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Text(
-                    "Promoted",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Color(0xFFD35400)),
+                  Text(
+                    AppLang.tr(context, 'promoted'),
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w900,
+                        color: isDark ? const Color(0xFFFFB74D) : const Color(0xFFD35400)
+                    ),
                   ),
                   const SizedBox(width: 12),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFF39C12),
+                      color: isDark ? const Color(0xFFFF9800) : const Color(0xFFF39C12),
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    child: const Text("Featured Listings", style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                    child: Text(
+                        AppLang.tr(context, 'featured_listings'),
+                        style: TextStyle(
+                            color: isDark ? Colors.black87 : Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.bold
+                        )
+                    ),
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Text("View More", style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.secondary, fontSize: 13)),
-                  const SizedBox(width: 4),
-                  Icon(Icons.arrow_forward_ios, color: isDark ? Colors.white : AppColors.secondary, size: 12),
-                ],
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => ViewAllCarsScreen(title: AppLang.tr(context, 'promoted'))));
+                },
+                child: Container(
+                  padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  color: Colors.transparent,
+                  child: Row(
+                    children: [
+                      Text(AppLang.tr(context, 'view_more'), style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : AppColors.secondary, fontSize: 13)),
+                      const SizedBox(width: 4),
+                      Icon(Icons.arrow_forward_ios, color: isDark ? Colors.white : AppColors.secondary, size: 12),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: 4),
-          Text("Premium featured listings", style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : AppColors.textSecondary, fontWeight: FontWeight.w500)),
+          Text(AppLang.tr(context, 'premium_listings'), style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : AppColors.textSecondary, fontWeight: FontWeight.w500)),
           const SizedBox(height: 24),
 
           _buildCarList(isPromotedSection: true),
@@ -205,7 +251,7 @@ class HomeScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: isDark ? AppColors.borderDark : Colors.transparent), // حد خفيف في الدارك
+        border: Border.all(color: isDark ? AppColors.borderDark : Colors.transparent),
         boxShadow: [
           BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.06), blurRadius: 15, offset: const Offset(0, 8)),
         ],
@@ -288,10 +334,10 @@ class HomeScreen extends StatelessWidget {
               height: 52,
               decoration: BoxDecoration(color: isDark ? AppColors.surfaceDark : Colors.white, border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight), borderRadius: BorderRadius.circular(24)),
               child: Row(
-                children: const [
-                  Icon(Icons.search, color: AppColors.textHint, size: 22),
-                  SizedBox(width: 8),
-                  Text("Search cars...", style: TextStyle(color: AppColors.textHint, fontSize: 15)),
+                children: [
+                  const Icon(Icons.search, color: AppColors.textHint, size: 22),
+                  const SizedBox(width: 8),
+                  Text(AppLang.tr(context, 'search_cars'), style: const TextStyle(color: AppColors.textHint, fontSize: 15)),
                 ],
               ),
             ),
@@ -319,21 +365,21 @@ class HomeScreen extends StatelessWidget {
       children: [
         _buildActionCard(
           isDark: isDark,
-          title: "Saved Cars",
+          title: AppLang.tr(context, 'saved_cars'),
           icon: Icons.favorite_border,
           iconColor: isDark ? Colors.white : Colors.black87,
           onTap: () {},
         ),
         _buildActionCard(
           isDark: isDark,
-          title: "Saved Parts",
+          title: AppLang.tr(context, 'saved_parts'),
           icon: Icons.build_outlined,
           iconColor: AppColors.primary,
           onTap: () {},
         ),
         _buildActionCard(
           isDark: isDark,
-          title: "Find Nearby",
+          title: AppLang.tr(context, 'find_nearby'),
           icon: Icons.location_on_outlined,
           iconColor: const Color(0xFFE57373),
           onTap: () {

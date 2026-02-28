@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
 import 'home_screen.dart';
 import '../widgets/ai_chat_bottom_sheet.dart';
 import '../../compare/screens/compare_screen.dart';
 import '../../parts/screens/parts_screen.dart';
 import '../../my_car/screens/my_car_screen.dart';
-import '../../profile/screens/profile_screen.dart'; // 1. استدعاء شاشة البروفايل
+import '../../profile/screens/profile_screen.dart';
 
 class MainLayout extends StatefulWidget {
   const MainLayout({super.key});
@@ -17,49 +18,43 @@ class MainLayout extends StatefulWidget {
 class _MainLayoutState extends State<MainLayout> {
   int _currentIndex = 0;
 
-  // ==========================================
-  // متغيرات التحكم في زرار الذكاء الاصطناعي العائم
-  // ==========================================
   double? _aiButtonX;
   double? _aiButtonY;
-  bool _isAiHidden = false; // هل الزرار مخفي؟
-  bool _isHiddenLeft = false; // هل استخبى في الشمال ولا اليمين؟
+  bool _isAiHidden = false;
+  bool _isHiddenLeft = false;
 
-  // الشاشات الـ 5 اللي بنبدل بينهم
   final List<Widget> _screens = [
     const HomeScreen(),
     const CompareScreen(),
     const PartsScreen(),
     const MyCarScreen(),
-    const ProfileScreen(), // 2. التعديل هنا: شاشة البروفايل الحقيقية
+    const ProfileScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    // تحديد المكان المبدئي للزرار أول مرة الشاشة تفتح
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     if (_aiButtonX == null || _aiButtonY == null) {
       final size = MediaQuery.of(context).size;
-      _aiButtonX = size.width - 80; // على اليمين
-      _aiButtonY = size.height - 180; // فوق شريط التنقل السفلي بشوية
+      _aiButtonX = size.width - 80;
+      _aiButtonY = size.height - 180;
     }
 
     return Scaffold(
-      backgroundColor: AppColors.background,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
 
       body: Stack(
         children: [
-          // 1. الشاشة الرئيسية اللي شغالة حالياً
           SafeArea(child: _screens[_currentIndex]),
 
-          // 2. زرار الذكاء الاصطناعي العائم أو السهم الجانبي
           if (_isAiHidden)
-            _buildHiddenAiArrow()
+            _buildHiddenAiArrow(isDark)
           else
-            _buildDraggableAiButton(),
+            _buildDraggableAiButton(isDark),
         ],
       ),
 
-      // شريط التنقل السفلي
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) {
@@ -68,16 +63,16 @@ class _MainLayoutState extends State<MainLayout> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: AppColors.primary,
-        unselectedItemColor: AppColors.textHint,
-        backgroundColor: Colors.white,
+        selectedItemColor: isDark ? Colors.white : AppColors.primary,
+        unselectedItemColor: isDark ? Colors.white54 : AppColors.textHint,
+        backgroundColor: isDark ? AppColors.surfaceDark : Colors.white,
         elevation: 10,
-        items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.compare_arrows), label: "Compare"),
-          BottomNavigationBarItem(icon: Icon(Icons.build_outlined), label: "Parts"),
-          BottomNavigationBarItem(icon: Icon(Icons.directions_car_outlined), label: "My Car"),
-          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: "Profile"),
+        items: [
+          BottomNavigationBarItem(icon: const Icon(Icons.home_outlined), label: AppLang.tr(context, 'home')),
+          BottomNavigationBarItem(icon: const Icon(Icons.compare_arrows), label: AppLang.tr(context, 'compare')),
+          BottomNavigationBarItem(icon: const Icon(Icons.build_outlined), label: AppLang.tr(context, 'parts')),
+          BottomNavigationBarItem(icon: const Icon(Icons.directions_car_outlined), label: AppLang.tr(context, 'my_car')),
+          BottomNavigationBarItem(icon: const Icon(Icons.person_outline), label: AppLang.tr(context, 'profile')),
         ],
       ),
     );
@@ -85,28 +80,24 @@ class _MainLayoutState extends State<MainLayout> {
 
   // --- دوال مساعدة لزرار الذكاء الاصطناعي ---
 
-  // دالة الزرار وهو ظاهر وقابل للسحب
-  Widget _buildDraggableAiButton() {
+  Widget _buildDraggableAiButton(bool isDark) {
     return Positioned(
       left: _aiButtonX,
       top: _aiButtonY,
       child: GestureDetector(
-        // دالة السحب: بتحدث الإحداثيات وتتأكد إمتى تخفي الزرار
         onPanUpdate: (details) {
           setState(() {
             final size = MediaQuery.of(context).size;
             _aiButtonX = _aiButtonX! + details.delta.dx;
             _aiButtonY = (_aiButtonY! + details.delta.dy).clamp(0.0, size.height - 160);
 
-            // لو اليوزر سحب الزرار للحافة اليمين أوي
             if (_aiButtonX! >= size.width - 60) {
               _isAiHidden = true;
-              _isHiddenLeft = false; // استخبى في اليمين
+              _isHiddenLeft = false;
             }
-            // لو اليوزر سحب الزرار للحافة الشمال أوي
             else if (_aiButtonX! <= 10) {
               _isAiHidden = true;
-              _isHiddenLeft = true; // استخبى في الشمال
+              _isHiddenLeft = true;
             }
           });
         },
@@ -128,18 +119,15 @@ class _MainLayoutState extends State<MainLayout> {
     );
   }
 
-  // دالة السهم الجانبي لما الزرار يكون مخفي
-  Widget _buildHiddenAiArrow() {
+  Widget _buildHiddenAiArrow(bool isDark) {
     return Positioned(
-      // بنحدد مكان السهم بناءً على هو استخبى يمين ولا شمال
       left: _isHiddenLeft ? 0 : null,
       right: _isHiddenLeft ? null : 0,
       top: _aiButtonY,
       child: GestureDetector(
         onTap: () {
           setState(() {
-            _isAiHidden = false; // إظهار الزرار تاني
-            // نرجع الزرار لمكان مرئي شوية عشان ميختفيش تاني علطول
+            _isAiHidden = false;
             _aiButtonX = _isHiddenLeft ? 30.0 : MediaQuery.of(context).size.width - 90;
           });
         },
@@ -147,20 +135,17 @@ class _MainLayoutState extends State<MainLayout> {
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
           decoration: BoxDecoration(
             color: AppColors.primary,
-            // تدوير الحواف بيختلف حسب اتجاه السهم
             borderRadius: _isHiddenLeft
                 ? const BorderRadius.only(topRight: Radius.circular(16), bottomRight: Radius.circular(16))
                 : const BorderRadius.only(topLeft: Radius.circular(16), bottomLeft: Radius.circular(16)),
             boxShadow: [
               BoxShadow(
-                  color: Colors.black.withOpacity(0.2),
+                  color: Colors.black.withOpacity(isDark ? 0.4 : 0.2),
                   blurRadius: 4,
-                  // اتجاه الظل بيختلف
                   offset: Offset(_isHiddenLeft ? 2 : -2, 2)
               ),
             ],
           ),
-          // اتجاه الأيقونة بيختلف
           child: Icon(
               _isHiddenLeft ? Icons.arrow_forward_ios : Icons.arrow_back_ios_new,
               color: Colors.white,

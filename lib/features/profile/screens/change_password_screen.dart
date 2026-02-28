@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
-import '../../home/widgets/ai_chat_bottom_sheet.dart'; // استدعاء شات الذكاء الاصطناعي
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
+import '../../home/widgets/ai_chat_bottom_sheet.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -16,13 +17,15 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -31,23 +34,20 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Change Password", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.black87)),
+            Text(AppLang.tr(context, 'change_password'), style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
             const SizedBox(height: 8),
-            const Text("Update your account password", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+            Text(AppLang.tr(context, 'update_account_password'), style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14)),
             const SizedBox(height: 40),
 
-            // حقول إدخال الباسورد بتصميم Premium
-            _buildPasswordField("Current Password", _currentPasswordController),
+            _buildPasswordField(AppLang.tr(context, 'current_password'), _currentPasswordController, isDark),
             const SizedBox(height: 24),
-            _buildPasswordField("New Password", _newPasswordController),
+            _buildPasswordField(AppLang.tr(context, 'new_password'), _newPasswordController, isDark),
             const SizedBox(height: 24),
-            _buildPasswordField("Confirm New Password", _confirmPasswordController),
+            _buildPasswordField(AppLang.tr(context, 'confirm_new_password'), _confirmPasswordController, isDark),
             const SizedBox(height: 48),
 
-            // زرار التحديث الفخم
             GestureDetector(
               onTap: () {
-                // كود حفظ الباسورد
                 Navigator.pop(context);
               },
               child: Container(
@@ -61,8 +61,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text("Update Password", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 0.5)),
+                  children: [
+                    Text(AppLang.tr(context, 'update_password'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 0.5)),
                   ],
                 ),
               ),
@@ -70,7 +70,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
           ],
         ),
       ),
-      // زرار الذكاء الاصطناعي الموحد
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -88,29 +87,28 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     );
   }
 
-  // دالة مساعدة لرسم حقول الباسورد
-  Widget _buildPasswordField(String label, TextEditingController controller) {
+  Widget _buildPasswordField(String label, TextEditingController controller, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: Colors.black87)),
+        Text(label, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 14, color: isDark ? Colors.white : Colors.black87)),
         const SizedBox(height: 10),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFFF8F9FA),
+            color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F9FA),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: const Color(0xFFEEEEEE)),
+            border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE)),
           ),
           child: TextField(
             controller: controller,
             obscureText: true,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
-            decoration: const InputDecoration(
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: isDark ? Colors.white : Colors.black87),
+            decoration: InputDecoration(
               hintText: "••••••••",
-              hintStyle: TextStyle(color: AppColors.textHint, letterSpacing: 2.0),
-              prefixIcon: Icon(Icons.lock_outline, color: AppColors.textHint, size: 22),
+              hintStyle: const TextStyle(color: AppColors.textHint, letterSpacing: 2.0),
+              prefixIcon: const Icon(Icons.lock_outline, color: AppColors.textHint, size: 22),
               border: InputBorder.none,
-              contentPadding: EdgeInsets.symmetric(vertical: 18),
+              contentPadding: const EdgeInsets.symmetric(vertical: 18),
             ),
           ),
         ),

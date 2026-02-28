@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
-import '../widgets/filters_bottom_sheet.dart'; // 1. استدعاء ملف الفلاتر هنا
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
+import '../widgets/filters_bottom_sheet.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -12,7 +13,6 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final TextEditingController _searchController = TextEditingController();
 
-  // قائمة البحث الشائعة
   final List<String> popularSearches = [
     "Toyota Corolla 2025",
     "BMW X5 2025",
@@ -26,56 +26,65 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. الهيدر (شريط البحث)
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
-                  // زر الرجوع
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
                     child: Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.border),
+                        border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.arrow_back, size: 24, color: Colors.black),
+                      child: Icon(Icons.arrow_back, size: 24, color: isDark ? Colors.white : Colors.black),
                     ),
                   ),
                   const SizedBox(width: 12),
 
-                  // شريط البحث
                   Expanded(
                     child: Container(
                       height: 48,
+                      // التعديل الأول: السطر ده بيجبر أي حاجة جوه الكونتينر إنها تتقص على نفس شكل الحواف الدائرية
+                      clipBehavior: Clip.antiAlias,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: isDark ? AppColors.surfaceDark : Colors.white,
                         border: Border.all(color: AppColors.primary),
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: TextField(
                         controller: _searchController,
-                        autofocus: true, // فتح الكيبورد تلقائياً
-                        decoration: const InputDecoration(
-                          hintText: "Search cars...",
-                          hintStyle: TextStyle(color: AppColors.textHint),
-                          prefixIcon: Icon(Icons.search, color: AppColors.textHint),
+                        autofocus: true,
+                        textAlignVertical: TextAlignVertical.center, // التعديل التاني: سنترة النص مع الأيقونة
+                        style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                        decoration: InputDecoration(
+                          hintText: AppLang.tr(context, 'search_cars'),
+                          hintStyle: const TextStyle(color: AppColors.textHint),
+                          prefixIcon: const Icon(Icons.search, color: AppColors.textHint),
+
+                          // التعديل التالت: منع الفلاتر من رسم خلفية مربعة وقت الفوكس
+                          filled: true,
+                          fillColor: Colors.transparent,
+
                           border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 12),
+                          focusedBorder: InputBorder.none, // إخفاء أي حدود افتراضية
+                          enabledBorder: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 16),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(width: 12),
 
-                  // 2. زر الفلاتر (التعديل هنا ✅)
                   GestureDetector(
                     onTap: () {
                       showModalBottomSheet(
@@ -88,7 +97,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     child: Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.secondary,
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Icon(Icons.tune, color: Colors.white, size: 24),
@@ -98,12 +107,11 @@ class _SearchScreenState extends State<SearchScreen> {
               ),
             ),
 
-            // 2. قائمة البحث الشائعة
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 8.0),
               child: Text(
-                "POPULAR SEARCHES",
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textHint),
+                AppLang.tr(context, 'popular_searches'),
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: AppColors.textHint),
               ),
             ),
 
@@ -113,9 +121,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 itemBuilder: (context, index) {
                   return ListTile(
                     leading: const Icon(Icons.search, color: AppColors.textHint, size: 20),
-                    title: Text(popularSearches[index], style: const TextStyle(fontSize: 16)),
+                    title: Text(popularSearches[index], style: TextStyle(fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
                     onTap: () {
-                      // لاحقاً سيتم إضافة كود الانتقال لنتائج البحث
                     },
                   );
                 },

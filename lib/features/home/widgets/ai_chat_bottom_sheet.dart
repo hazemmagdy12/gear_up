@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
 
 class AiChatBottomSheet extends StatelessWidget {
   const AiChatBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // 1. تحديد الثيم الحالي
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Padding(
-      // السطر ده عشان لما الكيبورد يفتح، الشاشة تترفع لفوق وميغطيش على مكان الكتابة
       padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: FractionallySizedBox(
-        heightFactor: 0.65, // الشاشة هتاخد 65% من الطول
+        heightFactor: 0.65,
         child: Container(
-          decoration: const BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+          decoration: BoxDecoration(
+            color: isDark ? AppColors.surfaceDark : Colors.white, // ربط الخلفية بالثيم
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
           ),
           child: Column(
             children: [
@@ -29,21 +32,21 @@ class AiChatBottomSheet extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
-                      children: const [
-                        Icon(Icons.auto_awesome, color: Colors.white),
-                        SizedBox(width: 8),
+                      children: [
+                        const Icon(Icons.auto_awesome, color: Colors.white),
+                        const SizedBox(width: 8),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text("GEAR UP AI", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
-                            Text("Always here to help", style: TextStyle(color: Colors.white70, fontSize: 12)),
+                            Text(AppLang.tr(context, 'ai_title'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                            Text(AppLang.tr(context, 'ai_subtitle'), style: const TextStyle(color: Colors.white70, fontSize: 12)),
                           ],
                         ),
                       ],
                     ),
                     IconButton(
                       icon: const Icon(Icons.keyboard_arrow_down, color: Colors.white),
-                      onPressed: () => Navigator.pop(context), // زرار القفل
+                      onPressed: () => Navigator.pop(context),
                     ),
                   ],
                 ),
@@ -54,9 +57,8 @@ class AiChatBottomSheet extends StatelessWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(24),
                   children: [
-                    // رسالة الترحيب من الـ AI
                     Align(
-                      alignment: Alignment.centerLeft,
+                      alignment: Alignment.centerLeft, // في العربي فلاتر بيقلبها يمين لوحده
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
@@ -67,39 +69,38 @@ class AiChatBottomSheet extends StatelessWidget {
                             bottomRight: Radius.circular(16),
                           ),
                         ),
-                        child: const Text(
-                          "Hi! I'm your GEAR UP AI assistant. How can I help you today?",
-                          style: TextStyle(color: Colors.white, fontSize: 14),
+                        child: Text(
+                          AppLang.tr(context, 'ai_greeting'),
+                          style: const TextStyle(color: Colors.white, fontSize: 14),
                         ),
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text("02:42 PM", style: TextStyle(color: AppColors.textHint, fontSize: 10)),
+                    const Text("02:42 PM", style: TextStyle(color: AppColors.textHint, fontSize: 10)), // الوقت مبنترجموش حاليا
 
                     const SizedBox(height: 24),
 
-                    // الاقتراحات السريعة
-                    const Text("Quick suggestions:", style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                    Text(AppLang.tr(context, 'quick_suggestions'), style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                     const SizedBox(height: 12),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        _buildSuggestionPill("Show me electric cars"),
-                        _buildSuggestionPill("Compare sedans under 30k"),
-                        _buildSuggestionPill("Best SUVs for families"),
+                        _buildSuggestionPill(AppLang.tr(context, 'sugg_electric')),
+                        _buildSuggestionPill(AppLang.tr(context, 'sugg_sedans')),
+                        _buildSuggestionPill(AppLang.tr(context, 'sugg_suvs')),
                       ],
                     ),
                   ],
                 ),
               ),
 
-              // 3. حقل إدخال النص (مكان الكتابة)
+              // 3. حقل إدخال النص
               Container(
                 padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  border: Border(top: BorderSide(color: AppColors.border)),
+                decoration: BoxDecoration(
+                  color: isDark ? AppColors.surfaceDark : Colors.white,
+                  border: Border(top: BorderSide(color: isDark ? AppColors.borderDark : AppColors.borderLight)),
                 ),
                 child: Row(
                   children: [
@@ -107,13 +108,15 @@ class AiChatBottomSheet extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         decoration: BoxDecoration(
-                          color: AppColors.background,
+                          color: isDark ? const Color(0xFF1E1E1E) : AppColors.background,
                           borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: AppColors.border),
+                          border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
                         ),
-                        child: const TextField(
+                        child: TextField(
+                          style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                           decoration: InputDecoration(
-                            hintText: "Type your message...",
+                            hintText: AppLang.tr(context, 'type_message'),
+                            hintStyle: const TextStyle(color: AppColors.textHint),
                             border: InputBorder.none,
                           ),
                         ),
@@ -122,10 +125,7 @@ class AiChatBottomSheet extends StatelessWidget {
                     const SizedBox(width: 12),
                     Container(
                       padding: const EdgeInsets.all(12),
-                      decoration: const BoxDecoration(
-                        color: AppColors.primary,
-                        shape: BoxShape.circle,
-                      ),
+                      decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle),
                       child: const Icon(Icons.send, color: Colors.white, size: 20),
                     ),
                   ],
@@ -138,12 +138,11 @@ class AiChatBottomSheet extends StatelessWidget {
     );
   }
 
-  // دالة لرسم زراير الاقتراحات
   Widget _buildSuggestionPill(String text) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF1E3A5F), // كحلي غامق زي التصميم
+        color: const Color(0xFF1E3A5F),
         borderRadius: BorderRadius.circular(20),
       ),
       child: Text(text, style: const TextStyle(color: Colors.white, fontSize: 12)),

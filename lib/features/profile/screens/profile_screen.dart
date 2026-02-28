@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart';
+import '../../../core/local_storage/cache_helper.dart';
+import '../../auth/cubit/auth_cubit.dart';
+import '../../auth/cubit/auth_state.dart'; // استدعاء ملف الـ States
 import '../../auth/screens/login_screen.dart';
 import '../../auth/screens/signup_screen.dart';
+import '../../intro/screens/welcome_screen.dart';
 import 'settings_screen.dart';
 import 'edit_profile_screen.dart';
 import 'published_items_screen.dart';
@@ -17,20 +23,32 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  bool isLoggedIn = true;
+
+  @override
+  void initState() {
+    super.initState();
+    // التعديل هنا: أول ما الشاشة تفتح، بنطلب من الكوبيت يجيب الداتا لو مش موجودة
+    final authCubit = context.read<AuthCubit>();
+    if (CacheHelper.getData(key: 'uid') != null && authCubit.currentUser == null) {
+      authCubit.getUserData();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    final bool isLoggedIn = CacheHelper.getData(key: 'uid') != null;
+
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
-        child: isLoggedIn ? _buildLoggedInProfile() : _buildUnloggedProfile(),
+        child: isLoggedIn ? _buildLoggedInProfile(isDark) : _buildUnloggedProfile(isDark),
       ),
-      // مفيش FloatingActionButton هنا عشان ميتداخلش مع البار السفلي
     );
   }
 
-  Widget _buildLoggedInProfile() {
+  Widget _buildLoggedInProfile(bool isDark) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -56,74 +74,120 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 15, offset: const Offset(0, 8)),
                 ],
               ),
-              child: Row(
-                children: [
-                  Container(
-                    width: 75,
-                    height: 75,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 3),
-                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
-                    ),
-                    child: const Center(
-                      child: Text("SA", style: TextStyle(color: AppColors.primary, fontSize: 26, fontWeight: FontWeight.w900)),
-                    ),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text("safds", style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white)),
-                        SizedBox(height: 6),
-                        Text("safds@sg", style: TextStyle(color: Colors.white70, fontSize: 14)),
-                        SizedBox(height: 4),
-                        Text("+20 123 456 7890", style: TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500)),
-                      ],
-                    ),
-                  ),
-                  const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
-                ],
+              // التعديل الأهم: مراقبة حالة الداتا وعرضها
+              child: BlocBuilder<AuthCubit, AuthState>(
+                builder: (context, state) {
+                  final user = context.read<AuthCubit>().currentUser;
+
+                  // إظهار تحميل لو الداتا لسه بتيجي
+                  if (state is GetUserLoading && user == null) {
+                    return const Center(
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: CircularProgressIndicator(color: Colors.white),
+                      ),
+                    );
+                  }
+
+                  // تجهيز البيانات
+                  String name = user?.name ?? 'User';
+                  String email = user?.email ?? '';
+                  String phone = user?.phone ?? '';
+
+                  // لوجيك لاستخراج أول حرفين من الاسم لعرضهم في الصورة
+                  String initials = "U";
+                  if (user != null && name.isNotEmpty) {
+                    List<String> nameParts = name.trim().split(' ');
+                    if (nameParts.length > 1 && nameParts[1].isNotEmpty) {
+                      initials = '${nameParts[0][0]}${nameParts[1][0]}'.toUpperCase();
+                    } else {
+                      initials = name[0].toUpperCase();
+                    }
+                  }
+
+                  return Row(
+                    children: [
+                      Container(
+                        width: 75,
+                        height: 75,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: Colors.white, width: 3),
+                          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+                        ),
+                        child: Center(
+                          child: Text(initials, style: const TextStyle(color: AppColors.primary, fontSize: 26, fontWeight: FontWeight.w900)),
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              name,
+                              style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.white),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            const SizedBox(height: 6),
+                            if (email.isNotEmpty)
+                              Text(email, style: const TextStyle(color: Colors.white70, fontSize: 14), maxLines: 1, overflow: TextOverflow.ellipsis,),
+                            const SizedBox(height: 4),
+                            if (phone.isNotEmpty)
+                              Text(phone, style: const TextStyle(color: Colors.white70, fontSize: 14, fontWeight: FontWeight.w500)),
+                          ],
+                        ),
+                      ),
+                      const Icon(Icons.arrow_forward_ios, color: Colors.white70, size: 16),
+                    ],
+                  );
+                },
               ),
             ),
           ),
           const SizedBox(height: 32),
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0, bottom: 16.0),
-            child: Text("My Account", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.black87)),
+
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, bottom: 16.0),
+            child: Text(AppLang.tr(context, 'my_account'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
           ),
 
           _buildMenuCard(
-            title: "Start Selling", subtitle: "List a new item", icon: Icons.attach_money_outlined, iconColor: const Color(0xFF2E7D32),
+            isDark: isDark,
+            title: AppLang.tr(context, 'start_selling'), subtitle: AppLang.tr(context, 'list_new_item'), icon: Icons.attach_money_outlined, iconColor: const Color(0xFF2E7D32),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const StartSellingScreen())),
           ),
           _buildMenuCard(
-            title: "Published Items", subtitle: "Manage your listings", icon: Icons.inventory_2_outlined, iconColor: const Color(0xFF1976D2),
+            isDark: isDark,
+            title: AppLang.tr(context, 'published_items'), subtitle: AppLang.tr(context, 'manage_listings'), icon: Icons.inventory_2_outlined, iconColor: const Color(0xFF1976D2),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PublishedItemsScreen())),
           ),
           _buildMenuCard(
-            title: "Account Information", subtitle: "Name, email, phone", icon: Icons.person_outline, iconColor: const Color(0xFFF57C00),
+            isDark: isDark,
+            title: AppLang.tr(context, 'account_information'), subtitle: AppLang.tr(context, 'account_info_sub'), icon: Icons.person_outline, iconColor: const Color(0xFFF57C00),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const AccountInformationScreen())),
           ),
           _buildMenuCard(
-            title: "Edit Profile", subtitle: "Update your information", icon: Icons.edit_outlined, iconColor: const Color(0xFF0097A7),
+            isDark: isDark,
+            title: AppLang.tr(context, 'edit_profile'), subtitle: AppLang.tr(context, 'edit_profile_sub'), icon: Icons.edit_outlined, iconColor: const Color(0xFF0097A7),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const EditProfileScreen())),
           ),
-          // تم إزالة كارت My Car من هنا نهائياً
           _buildMenuCard(
-            title: "Payments", subtitle: "Manage Payment Methods", icon: Icons.credit_card_outlined, iconColor: const Color(0xFF388E3C),
+            isDark: isDark,
+            title: AppLang.tr(context, 'payments'), subtitle: AppLang.tr(context, 'manage_payment_methods'), icon: Icons.credit_card_outlined, iconColor: const Color(0xFF388E3C),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const PaymentsScreen())),
           ),
 
-          const Padding(
-            padding: EdgeInsets.only(left: 8.0, top: 16.0, bottom: 16.0),
-            child: Text("App", style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: Colors.black87)),
+          Padding(
+            padding: const EdgeInsets.only(left: 8.0, top: 16.0, bottom: 16.0),
+            child: Text(AppLang.tr(context, 'app_section'), style: TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
           ),
 
           _buildMenuCard(
-            title: "Settings", subtitle: "Preferences, Privacy, Help", icon: Icons.settings_outlined, iconColor: const Color(0xFF616161),
+            isDark: isDark,
+            title: AppLang.tr(context, 'settings'), subtitle: AppLang.tr(context, 'settings_sub'), icon: Icons.settings_outlined, iconColor: const Color(0xFF616161),
             onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen())),
           ),
 
@@ -132,9 +196,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed: () {},
+              onPressed: () async {
+                await context.read<AuthCubit>().logout();
+
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => const WelcomeScreen()),
+                        (route) => false,
+                  );
+                }
+              },
               icon: const Icon(Icons.logout, color: Colors.white, size: 22),
-              label: const Text("Logout", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1.0)),
+              label: Text(AppLang.tr(context, 'logout'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16, letterSpacing: 1.0)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFDC3545),
                 padding: const EdgeInsets.symmetric(vertical: 20),
@@ -150,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildUnloggedProfile() {
+  Widget _buildUnloggedProfile(bool isDark) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(24.0),
       child: Column(
@@ -160,48 +234,92 @@ class _ProfileScreenState extends State<ProfileScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppColors.surface, shape: BoxShape.circle, border: Border.all(color: const Color(0xFFEEEEEE), width: 2),
+              color: isDark ? AppColors.surfaceDark : AppColors.surfaceLight,
+              shape: BoxShape.circle,
+              border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE), width: 2),
             ),
             child: Image.asset('assets/images/logo.png', height: 60, width: 60),
           ),
           const SizedBox(height: 16),
           ShaderMask(
             blendMode: BlendMode.srcIn,
-            shaderCallback: (bounds) => const LinearGradient(begin: Alignment.topCenter, end: Alignment.bottomCenter, colors: [Color(0xFF2E86AB), Color(0xFF0A3656)]).createShader(bounds),
-            child: const Text("GEAR UP", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, letterSpacing: 1.5, color: Colors.white)),
+            shaderCallback: (bounds) => LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: isDark
+                  ? [const Color(0xFF64B5F6), const Color(0xFF1976D2)]
+                  : [const Color(0xFF2E86AB), const Color(0xFF0A3656)],
+            ).createShader(bounds),
+            child: Text(
+                "GEAR UP",
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.w900,
+                  letterSpacing: 1.5,
+                  color: Colors.white,
+                  shadows: [
+                    Shadow(
+                        color: isDark ? const Color(0xFF64B5F6).withOpacity(0.6) : Colors.black.withOpacity(0.3),
+                        offset: Offset(0, isDark ? 0 : 3),
+                        blurRadius: isDark ? 10 : 5
+                    )
+                  ],
+                )
+            ),
           ),
           const SizedBox(height: 4),
-          const Text("Egypt's #1 Car App", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+          Text(AppLang.tr(context, 'egypt_car_app'), style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14)),
           const SizedBox(height: 40),
 
-          SizedBox(width: double.infinity, child: ElevatedButton.icon(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen())), icon: const Icon(Icons.login, color: Colors.white, size: 20), label: const Text("Login", style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)), style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))))),
+          SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen())),
+                  icon: const Icon(Icons.login, color: Colors.white, size: 20),
+                  label: Text(AppLang.tr(context, 'login'), style: const TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)))
+              )
+          ),
           const SizedBox(height: 16),
-          SizedBox(width: double.infinity, child: OutlinedButton.icon(onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupScreen())), icon: const Icon(Icons.person_add_outlined, color: Colors.black, size: 20), label: const Text("Sign Up", style: TextStyle(color: Colors.black, fontSize: 16, fontWeight: FontWeight.bold)), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: const BorderSide(color: AppColors.border), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16))))),
+          SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupScreen())),
+                  icon: Icon(Icons.person_add_outlined, color: isDark ? Colors.white : Colors.black, size: 20),
+                  label: Text(AppLang.tr(context, 'sign_up'), style: TextStyle(color: isDark ? Colors.white : Colors.black, fontSize: 16, fontWeight: FontWeight.bold)),
+                  style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), side: BorderSide(color: isDark ? AppColors.borderDark : AppColors.borderLight), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)))
+              )
+          ),
           const SizedBox(height: 40),
 
-          _buildMenuCard(title: "Settings", subtitle: "Preferences, Privacy, Help", icon: Icons.settings_outlined, iconColor: const Color(0xFF616161), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen()))),
+          _buildMenuCard(
+              isDark: isDark,
+              title: AppLang.tr(context, 'settings'), subtitle: AppLang.tr(context, 'settings_sub'), icon: Icons.settings_outlined, iconColor: const Color(0xFF616161),
+              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const SettingsScreen()))
+          ),
           const SizedBox(height: 100),
         ],
       ),
     );
   }
 
-  Widget _buildMenuCard({required String title, required String subtitle, required IconData icon, required Color iconColor, required VoidCallback onTap}) {
+  Widget _buildMenuCard({required bool isDark, required String title, required String subtitle, required IconData icon, required Color iconColor, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: isDark ? AppColors.surfaceDark : Colors.white,
           borderRadius: BorderRadius.circular(20),
-          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 15, offset: const Offset(0, 5))],
+          border: Border.all(color: isDark ? AppColors.borderDark : Colors.transparent),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.03), blurRadius: 15, offset: const Offset(0, 5))],
         ),
         child: Row(
           children: [
             Container(
               padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(color: iconColor.withOpacity(0.1), shape: BoxShape.circle),
+              decoration: BoxDecoration(color: iconColor.withOpacity(isDark ? 0.2 : 0.1), shape: BoxShape.circle),
               child: Icon(icon, color: iconColor, size: 24),
             ),
             const SizedBox(width: 16),
@@ -209,13 +327,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Colors.black87)),
+                  Text(title, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
                   const SizedBox(height: 4),
-                  Text(subtitle, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500)),
+                  Text(subtitle, style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 13, fontWeight: FontWeight.w500)),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward_ios, color: AppColors.textHint, size: 16),
+            Icon(Icons.arrow_forward_ios, color: isDark ? Colors.white54 : AppColors.textHint, size: 16),
           ],
         ),
       ),

@@ -1,19 +1,22 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
-import '../../home/widgets/ai_chat_bottom_sheet.dart'; // استدعاء الذكاء الاصطناعي
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
+import '../../home/widgets/ai_chat_bottom_sheet.dart';
 
 class PrivacyPolicyScreen extends StatelessWidget {
   const PrivacyPolicyScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -22,58 +25,57 @@ class PrivacyPolicyScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Privacy Policy", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.black87)),
+            Text(AppLang.tr(context, 'privacy_policy_title'), style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
             const SizedBox(height: 8),
-            const Text("Last updated: October 23, 2025", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+            Text(AppLang.tr(context, 'last_updated'), style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14)),
             const SizedBox(height: 32),
 
-            _buildSectionTitle("1. Information We Collect"),
-            _buildParagraph("GEAR UP collects information that you provide directly to us when you create an account, use our services, or communicate with us. This may include your name, email address, phone number, and vehicle information."),
-            _buildParagraph("We also automatically collect certain information about your device and how you interact with our app, including your IP address, device type, operating system, and usage patterns."),
+            _buildSectionTitle(AppLang.tr(context, 'pp_sec1_title')),
+            _buildParagraph(AppLang.tr(context, 'pp_sec1_p1'), isDark),
+            _buildParagraph(AppLang.tr(context, 'pp_sec1_p2'), isDark),
             const SizedBox(height: 24),
 
-            _buildSectionTitle("2. How We Use Your Information"),
-            _buildParagraph("We use the information we collect to:"),
-            _buildBulletPoint("Provide, maintain, and improve our services"),
-            _buildBulletPoint("Send you technical notices and support messages"),
-            _buildBulletPoint("Respond to your comments and questions"),
-            _buildBulletPoint("Provide personalized car recommendations"),
-            _buildBulletPoint("Monitor and analyze trends, usage, and activities"),
-            _buildBulletPoint("Detect, prevent, and address technical issues"),
+            _buildSectionTitle(AppLang.tr(context, 'pp_sec2_title')),
+            _buildParagraph(AppLang.tr(context, 'pp_sec2_p1'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec2_b1'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec2_b2'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec2_b3'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec2_b4'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec2_b5'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec2_b6'), isDark),
             const SizedBox(height: 24),
 
-            _buildSectionTitle("3. Information Sharing"),
-            _buildParagraph("We do not sell your personal information. We may share your information only in the following circumstances: with your consent, with service providers who help us operate our business, to comply with legal obligations, or to protect our rights and safety."),
+            _buildSectionTitle(AppLang.tr(context, 'pp_sec3_title')),
+            _buildParagraph(AppLang.tr(context, 'pp_sec3_p1'), isDark),
             const SizedBox(height: 24),
 
-            _buildSectionTitle("4. Data Security"),
-            _buildParagraph("We take reasonable measures to help protect your personal information from loss, theft, misuse, unauthorized access, disclosure, alteration, and destruction. However, no internet transmission is ever fully secure or error-free."),
+            _buildSectionTitle(AppLang.tr(context, 'pp_sec4_title')),
+            _buildParagraph(AppLang.tr(context, 'pp_sec4_p1'), isDark),
             const SizedBox(height: 24),
 
-            _buildSectionTitle("5. Your Rights and Choices"),
-            _buildParagraph("You have the right to:"),
-            _buildBulletPoint("Access and update your account information"),
-            _buildBulletPoint("Request deletion of your personal data"),
-            _buildBulletPoint("Opt-out of marketing communications"),
-            _buildBulletPoint("Disable cookies through your browser settings"),
+            _buildSectionTitle(AppLang.tr(context, 'pp_sec5_title')),
+            _buildParagraph(AppLang.tr(context, 'pp_sec5_p1'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec5_b1'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec5_b2'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec5_b3'), isDark),
+            _buildBulletPoint(AppLang.tr(context, 'pp_sec5_b4'), isDark),
             const SizedBox(height: 24),
 
-            _buildSectionTitle("6. Children's Privacy"),
-            _buildParagraph("Our services are not directed to children under 13. We do not knowingly collect personal information from children under 13. If you become aware that a child has provided us with personal information, please contact us."),
+            _buildSectionTitle(AppLang.tr(context, 'pp_sec6_title')),
+            _buildParagraph(AppLang.tr(context, 'pp_sec6_p1'), isDark),
             const SizedBox(height: 24),
 
-            _buildSectionTitle("7. Changes to This Policy"),
-            _buildParagraph("We may update this privacy policy from time to time. We will notify you of any changes by posting the new privacy policy on this page and updating the \"Last updated\" date."),
+            _buildSectionTitle(AppLang.tr(context, 'pp_sec7_title')),
+            _buildParagraph(AppLang.tr(context, 'pp_sec7_p1'), isDark),
             const SizedBox(height: 24),
 
-            _buildSectionTitle("8. Contact Us"),
-            _buildParagraph("If you have any questions about this Privacy Policy, please contact us at:\nEmail: privacy@gearup.com\nPhone: +20 2 1234 5678"),
+            _buildSectionTitle(AppLang.tr(context, 'pp_sec8_title')),
+            _buildParagraph(AppLang.tr(context, 'pp_sec8_p1'), isDark),
 
             const SizedBox(height: 80),
           ],
         ),
       ),
-      // زرار الشات العائم للذكاء الاصطناعي
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showModalBottomSheet(
@@ -101,30 +103,30 @@ class PrivacyPolicyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildParagraph(String text) {
+  Widget _buildParagraph(String text, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12.0),
       child: Text(
         text,
-        style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.6),
+        style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : AppColors.textSecondary, height: 1.6),
       ),
     );
   }
 
-  Widget _buildBulletPoint(String text) {
+  Widget _buildBulletPoint(String text, bool isDark) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8.0, left: 16.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(top: 6.0, right: 8.0),
-            child: Icon(Icons.circle, size: 6, color: AppColors.textSecondary),
+          Padding(
+            padding: const EdgeInsets.only(top: 6.0, right: 8.0),
+            child: Icon(Icons.circle, size: 6, color: isDark ? Colors.white54 : AppColors.textSecondary),
           ),
           Expanded(
             child: Text(
               text,
-              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary, height: 1.5),
+              style: TextStyle(fontSize: 14, color: isDark ? Colors.white70 : AppColors.textSecondary, height: 1.5),
             ),
           ),
         ],

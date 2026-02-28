@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
-import '../../home/widgets/ai_chat_bottom_sheet.dart'; // استدعاء الذكاء الاصطناعي
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
+import '../../home/widgets/ai_chat_bottom_sheet.dart';
 
 class StartSellingScreen extends StatefulWidget {
   const StartSellingScreen({super.key});
@@ -10,19 +11,22 @@ class StartSellingScreen extends StatefulWidget {
 }
 
 class _StartSellingScreenState extends State<StartSellingScreen> {
-  String _selectedItemType = "Car";
-  String? _selectedTransmission;
-  String? _selectedCondition;
+  // بنخلي القيمة المبدئية 'type_car' كمفتاح عشان نترجمها صح
+  String _selectedItemTypeKey = 'type_car';
+  String? _selectedTransmissionKey;
+  String? _selectedConditionKey;
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -31,43 +35,43 @@ class _StartSellingScreenState extends State<StartSellingScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Start Selling", style: TextStyle(color: AppColors.primary, fontSize: 24, fontWeight: FontWeight.w900)),
+            Text(AppLang.tr(context, 'start_selling_title'), style: const TextStyle(color: AppColors.primary, fontSize: 24, fontWeight: FontWeight.w900)),
             const SizedBox(height: 8),
-            const Text("Choose item type and add details", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+            Text(AppLang.tr(context, 'choose_item_type'), style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14)),
             const SizedBox(height: 32),
 
             // 1. اختيار نوع الإعلان
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: isDark ? AppColors.surfaceDark : Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFEEEEEE)),
-                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 4))],
+                border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE)),
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.02), blurRadius: 8, offset: const Offset(0, 4))],
               ),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(color: AppColors.surface, shape: BoxShape.circle),
+                    decoration: BoxDecoration(color: isDark ? const Color(0xFF2A2A2A) : AppColors.surface, shape: BoxShape.circle),
                     child: Icon(
-                      _selectedItemType == "Car" ? Icons.directions_car_outlined :
-                      _selectedItemType == "Car Part" ? Icons.build_outlined : Icons.add_circle_outline,
+                      _selectedItemTypeKey == 'type_car' ? Icons.directions_car_outlined :
+                      _selectedItemTypeKey == 'type_part' ? Icons.build_outlined : Icons.add_circle_outline,
                       color: AppColors.primary,
                       size: 20,
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Text(_selectedItemType, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Colors.black87)),
+                  Text(AppLang.tr(context, _selectedItemTypeKey), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
                   const Spacer(),
                   TextButton(
-                    onPressed: _showTypeSelectionSheet,
+                    onPressed: () => _showTypeSelectionSheet(isDark),
                     style: TextButton.styleFrom(
                       foregroundColor: AppColors.primary,
-                      backgroundColor: AppColors.surface,
+                      backgroundColor: isDark ? const Color(0xFF2A2A2A) : AppColors.surface,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
-                    child: const Text("Change", style: TextStyle(fontWeight: FontWeight.bold)),
+                    child: Text(AppLang.tr(context, 'change'), style: const TextStyle(fontWeight: FontWeight.bold)),
                   ),
                 ],
               ),
@@ -75,70 +79,77 @@ class _StartSellingScreenState extends State<StartSellingScreen> {
             const SizedBox(height: 32),
 
             // 2. قسم رفع الصور
-            const Text("Photos", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: Colors.black87)),
+            Text(AppLang.tr(context, 'photos'), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
             const SizedBox(height: 12),
             Container(
               width: 110,
               height: 110,
               decoration: BoxDecoration(
-                color: const Color(0xFFF8F9FA),
+                color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F9FA),
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: const Color(0xFFE0E0E0), style: BorderStyle.solid),
+                border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFE0E0E0), style: BorderStyle.solid),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Icon(Icons.add_a_photo_outlined, color: AppColors.textHint, size: 28),
-                  SizedBox(height: 8),
-                  Text("Add Photo", style: TextStyle(color: AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
+                children: [
+                  const Icon(Icons.add_a_photo_outlined, color: AppColors.textHint, size: 28),
+                  const SizedBox(height: 8),
+                  Text(AppLang.tr(context, 'add_photo'), style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 12, fontWeight: FontWeight.bold)),
                 ],
               ),
             ),
             const SizedBox(height: 12),
-            const Text("0/10 photos - Add clear photos from different angles", style: TextStyle(color: AppColors.textHint, fontSize: 12)),
+            Text(AppLang.tr(context, 'photo_hint'), style: const TextStyle(color: AppColors.textHint, fontSize: 12)),
             const SizedBox(height: 32),
 
-            // 3. الحقول الأساسية المشتركة
-            _buildTextField(label: "Title", hint: "Enter an attractive title"),
-            _buildTextField(label: "Price (EGP)", hint: "Enter price", isNumber: true),
+            // 3. الحقول الأساسية
+            _buildTextField(label: AppLang.tr(context, 'title'), hint: AppLang.tr(context, 'title_hint'), isDark: isDark),
+            _buildTextField(label: AppLang.tr(context, 'price_egp'), hint: AppLang.tr(context, 'price_hint'), isNumber: true, isDark: isDark),
 
             // 4. الحقول المتغيرة
-            if (_selectedItemType == "Car") ...[
+            if (_selectedItemTypeKey == 'type_car') ...[
               Row(
                 children: [
-                  Expanded(child: _buildTextField(label: "Company", hint: "e.g., BMW")),
+                  Expanded(child: _buildTextField(label: AppLang.tr(context, 'company'), hint: "e.g., BMW", isDark: isDark)),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildTextField(label: "Model", hint: "e.g., X5")),
+                  Expanded(child: _buildTextField(label: AppLang.tr(context, 'model'), hint: "e.g., X5", isDark: isDark)),
                 ],
               ),
               Row(
                 children: [
-                  Expanded(child: _buildTextField(label: "Year", hint: "2024", isNumber: true)),
+                  Expanded(child: _buildTextField(label: AppLang.tr(context, 'year'), hint: "2024", isNumber: true, isDark: isDark)),
                   const SizedBox(width: 16),
-                  Expanded(child: _buildTextField(label: "Mileage", hint: "km", isNumber: true)),
+                  Expanded(child: _buildTextField(label: AppLang.tr(context, 'mileage'), hint: "km", isNumber: true, isDark: isDark)),
                 ],
               ),
               _buildDropdownField(
-                label: "Transmission", hint: "Select type", value: _selectedTransmission, items: ["Automatic", "Manual"],
-                onChanged: (val) => setState(() => _selectedTransmission = val),
+                label: AppLang.tr(context, 'transmission'),
+                hint: AppLang.tr(context, 'transmission_hint'),
+                valueKey: _selectedTransmissionKey,
+                itemKeys: ['automatic', 'manual'],
+                isDark: isDark,
+                onChanged: (val) => setState(() => _selectedTransmissionKey = val),
               ),
             ] else ...[
-              _buildTextField(label: "Part/Accessory Name", hint: "e.g., Ceramic Brake Pads"),
-              _buildTextField(label: "Compatibility", hint: "e.g., BMW X5 2020-2024"),
+              _buildTextField(label: AppLang.tr(context, 'part_name'), hint: AppLang.tr(context, 'part_hint'), isDark: isDark),
+              _buildTextField(label: AppLang.tr(context, 'compatibility'), hint: AppLang.tr(context, 'compat_hint'), isDark: isDark),
               _buildDropdownField(
-                label: "Condition", hint: "Select condition", value: _selectedCondition, items: ["New", "Used", "Refurbished"],
-                onChanged: (val) => setState(() => _selectedCondition = val),
+                label: AppLang.tr(context, 'condition'),
+                hint: AppLang.tr(context, 'condition_hint'),
+                valueKey: _selectedConditionKey,
+                itemKeys: ['new_condition', 'used_condition', 'refurbished'],
+                isDark: isDark,
+                onChanged: (val) => setState(() => _selectedConditionKey = val),
               ),
             ],
 
             // 5. الوصف
-            _buildTextField(label: "Description", hint: "Add a detailed description...", maxLines: 4),
+            _buildTextField(label: AppLang.tr(context, 'description'), hint: AppLang.tr(context, 'desc_hint'), maxLines: 4, isDark: isDark),
             const SizedBox(height: 24),
 
-            // 6. زرار النشر الفخم المليان
+            // 6. زرار النشر
             GestureDetector(
               onTap: () {
-                // كود النشر
                 Navigator.pop(context);
               },
               child: Container(
@@ -152,8 +163,8 @@ class _StartSellingScreenState extends State<StartSellingScreen> {
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
-                    Text("Publish Listing", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 0.5)),
+                  children: [
+                    Text(AppLang.tr(context, 'publish_listing'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16, letterSpacing: 0.5)),
                   ],
                 ),
               ),
@@ -179,23 +190,24 @@ class _StartSellingScreenState extends State<StartSellingScreen> {
     );
   }
 
-  Widget _buildTextField({required String label, required String hint, bool isNumber = false, int maxLines = 1}) {
+  Widget _buildTextField({required String label, required String hint, required bool isDark, bool isNumber = false, int maxLines = 1}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87)),
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: isDark ? Colors.white : Colors.black87)),
           const SizedBox(height: 8),
           Container(
             decoration: BoxDecoration(
-              color: const Color(0xFFF8F9FA), // خلفية رمادي فاتح بريميوم
+              color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F9FA),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFEEEEEE)),
+              border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE)),
             ),
             child: TextField(
               keyboardType: isNumber ? TextInputType.number : TextInputType.text,
               maxLines: maxLines,
+              style: TextStyle(color: isDark ? Colors.white : Colors.black87),
               decoration: InputDecoration(
                 hintText: hint,
                 hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 14),
@@ -209,31 +221,32 @@ class _StartSellingScreenState extends State<StartSellingScreen> {
     );
   }
 
-  Widget _buildDropdownField({required String label, required String hint, required String? value, required List<String> items, required ValueChanged<String?> onChanged}) {
+  Widget _buildDropdownField({required String label, required String hint, required String? valueKey, required List<String> itemKeys, required bool isDark, required ValueChanged<String?> onChanged}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87)),
+          Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: isDark ? Colors.white : Colors.black87)),
           const SizedBox(height: 8),
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
             decoration: BoxDecoration(
-              color: const Color(0xFFF8F9FA),
+              color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F9FA),
               borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: const Color(0xFFEEEEEE)),
+              border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE)),
             ),
             child: DropdownButtonHideUnderline(
               child: DropdownButton<String>(
-                value: value,
+                value: valueKey,
                 hint: Text(hint, style: const TextStyle(color: AppColors.textHint, fontSize: 14)),
                 isExpanded: true,
-                icon: const Icon(Icons.keyboard_arrow_down, color: Colors.black),
-                items: items.map((String item) {
+                dropdownColor: isDark ? AppColors.surfaceDark : Colors.white,
+                icon: Icon(Icons.keyboard_arrow_down, color: isDark ? Colors.white : Colors.black),
+                items: itemKeys.map((String key) {
                   return DropdownMenuItem<String>(
-                    value: item,
-                    child: Text(item),
+                    value: key,
+                    child: Text(AppLang.tr(context, key), style: TextStyle(color: isDark ? Colors.white : Colors.black87)),
                   );
                 }).toList(),
                 onChanged: onChanged,
@@ -245,9 +258,10 @@ class _StartSellingScreenState extends State<StartSellingScreen> {
     );
   }
 
-  void _showTypeSelectionSheet() {
+  void _showTypeSelectionSheet(bool isDark) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
       shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(24))),
       builder: (context) {
         return SafeArea(
@@ -256,11 +270,11 @@ class _StartSellingScreenState extends State<StartSellingScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text("Select Item Type", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.black87)),
+                Text(AppLang.tr(context, 'select_item_type'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
                 const SizedBox(height: 24),
-                _buildTypeOption("Car", Icons.directions_car_outlined),
-                _buildTypeOption("Car Part", Icons.build_outlined),
-                _buildTypeOption("Accessory", Icons.add_circle_outline),
+                _buildTypeOption('type_car', Icons.directions_car_outlined, isDark),
+                _buildTypeOption('type_part', Icons.build_outlined, isDark),
+                _buildTypeOption('type_accessory', Icons.add_circle_outline, isDark),
               ],
             ),
           ),
@@ -269,16 +283,16 @@ class _StartSellingScreenState extends State<StartSellingScreen> {
     );
   }
 
-  Widget _buildTypeOption(String title, IconData icon) {
+  Widget _buildTypeOption(String key, IconData icon, bool isDark) {
     return ListTile(
       leading: Container(
         padding: const EdgeInsets.all(8),
-        decoration: BoxDecoration(color: AppColors.surface, shape: BoxShape.circle),
+        decoration: BoxDecoration(color: isDark ? const Color(0xFF2A2A2A) : AppColors.surface, shape: BoxShape.circle),
         child: Icon(icon, color: AppColors.primary),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+      title: Text(AppLang.tr(context, key), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
       onTap: () {
-        setState(() => _selectedItemType = title);
+        setState(() => _selectedItemTypeKey = key);
         Navigator.pop(context);
       },
     );

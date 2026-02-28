@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
 import 'start_selling_screen.dart';
-import '../../home/widgets/ai_chat_bottom_sheet.dart'; // استدعاء الذكاء الاصطناعي
+import '../../home/widgets/ai_chat_bottom_sheet.dart';
 
 class PublishedItemsScreen extends StatefulWidget {
   const PublishedItemsScreen({super.key});
@@ -12,17 +13,26 @@ class PublishedItemsScreen extends StatefulWidget {
 
 class _PublishedItemsScreenState extends State<PublishedItemsScreen> {
   int _selectedTabIndex = 0;
-  final List<String> _tabs = ["All (0)", "Cars (0)", "Parts (0)", "Accessories (0)"];
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
+    // بنجيب الكلمات من القاموس ونضيف جنبها الرقم الوهمي
+    final List<String> tabs = [
+      "${AppLang.tr(context, 'tab_all')} (0)",
+      "${AppLang.tr(context, 'tab_cars')} (0)",
+      "${AppLang.tr(context, 'tab_parts')} (0)",
+      "${AppLang.tr(context, 'tab_accessories')} (0)"
+    ];
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.transparent,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          icon: Icon(Icons.arrow_back, color: isDark ? Colors.white : Colors.black),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -33,22 +43,21 @@ class _PublishedItemsScreenState extends State<PublishedItemsScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 24.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: const [
-                Text("Published Items", style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: Colors.black87)),
-                SizedBox(height: 4),
-                Text("Manage Your Listings", style: TextStyle(color: AppColors.textSecondary, fontSize: 14)),
+              children: [
+                Text(AppLang.tr(context, 'published_items'), style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
+                const SizedBox(height: 4),
+                Text(AppLang.tr(context, 'manage_listings'), style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 14)),
               ],
             ),
           ),
           const SizedBox(height: 24),
 
-          // الـ Tabs (All, Cars, etc..)
           SizedBox(
             height: 40,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              itemCount: _tabs.length,
+              itemCount: tabs.length,
               itemBuilder: (context, index) {
                 bool isSelected = _selectedTabIndex == index;
                 return GestureDetector(
@@ -57,16 +66,16 @@ class _PublishedItemsScreenState extends State<PublishedItemsScreen> {
                     margin: const EdgeInsets.only(right: 12),
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
                     decoration: BoxDecoration(
-                      color: isSelected ? AppColors.primary : Colors.white,
-                      border: Border.all(color: isSelected ? AppColors.primary : const Color(0xFFEEEEEE)),
+                      color: isSelected ? AppColors.primary : (isDark ? AppColors.surfaceDark : Colors.white),
+                      border: Border.all(color: isSelected ? AppColors.primary : (isDark ? AppColors.borderDark : const Color(0xFFEEEEEE))),
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: isSelected ? [BoxShadow(color: AppColors.primary.withOpacity(0.3), blurRadius: 8, offset: const Offset(0, 4))] : [],
                     ),
                     child: Center(
                       child: Text(
-                        _tabs[index],
+                        tabs[index],
                         style: TextStyle(
-                          color: isSelected ? Colors.white : AppColors.textSecondary,
+                          color: isSelected ? Colors.white : (isDark ? Colors.white70 : AppColors.textSecondary),
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -77,7 +86,6 @@ class _PublishedItemsScreenState extends State<PublishedItemsScreen> {
             ),
           ),
 
-          // حالة الـ Empty State
           Expanded(
             child: Center(
               child: Column(
@@ -85,16 +93,15 @@ class _PublishedItemsScreenState extends State<PublishedItemsScreen> {
                 children: [
                   Container(
                     padding: const EdgeInsets.all(24),
-                    decoration: BoxDecoration(color: const Color(0xFFF8F9FA), shape: BoxShape.circle, border: Border.all(color: const Color(0xFFEEEEEE))),
+                    decoration: BoxDecoration(color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFF8F9FA), shape: BoxShape.circle, border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE))),
                     child: const Icon(Icons.inventory_2_outlined, size: 48, color: AppColors.textHint),
                   ),
                   const SizedBox(height: 20),
-                  const Text("No listings yet", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: Colors.black87)),
+                  Text(AppLang.tr(context, 'no_listings_yet'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
                   const SizedBox(height: 8),
-                  const Text("You haven't published any listings yet", style: TextStyle(color: AppColors.textSecondary)),
+                  Text(AppLang.tr(context, 'haven_not_published'), style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary)),
                   const SizedBox(height: 32),
 
-                  // زرار بريميوم للـ Start Selling
                   GestureDetector(
                     onTap: () {
                       Navigator.push(context, MaterialPageRoute(builder: (context) => const StartSellingScreen()));
@@ -108,7 +115,7 @@ class _PublishedItemsScreenState extends State<PublishedItemsScreen> {
                           BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 4)),
                         ],
                       ),
-                      child: const Text("Start Selling", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
+                      child: Text(AppLang.tr(context, 'start_selling'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w900, fontSize: 16)),
                     ),
                   ),
                 ],

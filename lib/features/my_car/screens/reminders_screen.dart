@@ -1,47 +1,48 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
 
 class RemindersScreen extends StatelessWidget {
   const RemindersScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // 1. الهيدر (زرار الرجوع والعنوان)
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Row(
                 children: [
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
-                    child: const Icon(Icons.arrow_back, size: 24, color: Colors.black),
+                    child: Icon(Icons.arrow_back, size: 24, color: isDark ? Colors.white : Colors.black),
                   ),
                   const SizedBox(width: 16),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text("Upcoming Reminders", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
-                      Text("Manage your car maintenance reminders", style: TextStyle(fontSize: 12, color: AppColors.textHint)),
+                    children: [
+                      Text(AppLang.tr(context, 'upcoming_reminders'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                      Text(AppLang.tr(context, 'manage_reminders'), style: const TextStyle(fontSize: 12, color: AppColors.textHint)),
                     ],
                   ),
                 ],
               ),
             ),
 
-            // 2. زرار إضافة تذكير جديد
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed: () => _showReminderDialog(context, isEdit: false),
+                  onPressed: () => _showReminderDialog(context, isDark, isEdit: false),
                   icon: const Icon(Icons.add, color: Colors.white, size: 20),
-                  label: const Text("Add Reminder", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  label: Text(AppLang.tr(context, 'add_reminder'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
@@ -52,14 +53,14 @@ class RemindersScreen extends StatelessWidget {
             ),
             const SizedBox(height: 16),
 
-            // 3. لستة التذكيرات
             Expanded(
               child: ListView(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 children: [
                   _buildReminderItem(
                     context: context,
-                    title: "Oil Change",
+                    isDark: isDark,
+                    title: "Oil Change", // داتا تجريبية
                     date: "November 15, 2025",
                     frequency: "Every 5,000 km",
                     statusText: "100 days overdue",
@@ -67,6 +68,7 @@ class RemindersScreen extends StatelessWidget {
                   ),
                   _buildReminderItem(
                     context: context,
+                    isDark: isDark,
                     title: "Tire Rotation",
                     date: "December 20, 2025",
                     frequency: "Every 10,000 km",
@@ -75,6 +77,7 @@ class RemindersScreen extends StatelessWidget {
                   ),
                   _buildReminderItem(
                     context: context,
+                    isDark: isDark,
                     title: "Brake Inspection",
                     date: "January 5, 2026",
                     frequency: "Routine check",
@@ -90,11 +93,9 @@ class RemindersScreen extends StatelessWidget {
     );
   }
 
-  // --- دوال مساعدة ---
-
-  // دالة رسم كارت التذكير
   Widget _buildReminderItem({
     required BuildContext context,
+    required bool isDark,
     required String title,
     required String date,
     required String frequency,
@@ -105,11 +106,11 @@ class RemindersScreen extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: isDark ? AppColors.surfaceDark : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
         boxShadow: [
-          BoxShadow(color: Colors.black.withOpacity(0.02), blurRadius: 8, offset: const Offset(0, 4)),
+          BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.02), blurRadius: 8, offset: const Offset(0, 4)),
         ],
       ),
       child: Row(
@@ -117,7 +118,7 @@ class RemindersScreen extends StatelessWidget {
         children: [
           Container(
             padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(color: Colors.red.withOpacity(0.1), shape: BoxShape.circle),
+            decoration: BoxDecoration(color: Colors.red.withOpacity(isDark ? 0.2 : 0.1), shape: BoxShape.circle),
             child: const Icon(Icons.notifications_none, color: Colors.redAccent),
           ),
           const SizedBox(width: 16),
@@ -125,28 +126,28 @@ class RemindersScreen extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(title, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
                 const SizedBox(height: 4),
-                Text("Due: $date", style: const TextStyle(color: AppColors.textSecondary, fontSize: 12)),
+                Text("${AppLang.tr(context, 'due_date')}$date", style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, fontSize: 12)),
                 const SizedBox(height: 4),
                 Text(frequency, style: const TextStyle(color: AppColors.textHint, fontSize: 12)),
                 const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // حالة التذكير (Pill)
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(color: statusColor.withOpacity(0.1), borderRadius: BorderRadius.circular(16)),
+                      decoration: BoxDecoration(color: statusColor.withOpacity(isDark ? 0.2 : 0.1), borderRadius: BorderRadius.circular(16)),
                       child: Text(statusText, style: TextStyle(color: statusColor, fontWeight: FontWeight.bold, fontSize: 12)),
                     ),
-                    // زراير التعديل والمسح
                     Row(
                       children: [
                         _buildActionButton(
                           icon: Icons.edit_outlined,
+                          isDark: isDark,
                           onTap: () => _showReminderDialog(
                             context,
+                            isDark,
                             isEdit: true,
                             initialTask: title,
                             initialDate: date,
@@ -156,7 +157,8 @@ class RemindersScreen extends StatelessWidget {
                         const SizedBox(width: 8),
                         _buildActionButton(
                           icon: Icons.delete_outline,
-                          onTap: () => _showDeleteConfirmation(context),
+                          isDark: isDark,
+                          onTap: () => _showDeleteConfirmation(context, isDark),
                         ),
                       ],
                     )
@@ -170,26 +172,23 @@ class RemindersScreen extends StatelessWidget {
     );
   }
 
-  // زرار صغير للتعديل أو المسح
-  Widget _buildActionButton({required IconData icon, required VoidCallback onTap}) {
+  Widget _buildActionButton({required IconData icon, required bool isDark, required VoidCallback onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          border: Border.all(color: AppColors.border),
+          border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
           shape: BoxShape.circle,
         ),
-        child: Icon(icon, size: 16, color: AppColors.textSecondary),
+        child: Icon(icon, size: 16, color: isDark ? Colors.white70 : AppColors.textSecondary),
       ),
     );
   }
 
-  // ==========================================
-  // نافذة إضافة أو تعديل تذكير
-  // ==========================================
   void _showReminderDialog(
-      BuildContext context, {
+      BuildContext context,
+      bool isDark, {
         required bool isEdit,
         String initialTask = "",
         String initialDate = "",
@@ -199,6 +198,7 @@ class RemindersScreen extends StatelessWidget {
       context: context,
       builder: (context) {
         return Dialog(
+          backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           child: Padding(
             padding: const EdgeInsets.all(24.0),
@@ -210,34 +210,34 @@ class RemindersScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(isEdit ? "Edit Reminder" : "Add Reminder", style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
+                      Text(isEdit ? AppLang.tr(context, 'edit_reminder') : AppLang.tr(context, 'add_reminder'), style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: AppColors.primary)),
                       GestureDetector(onTap: () => Navigator.pop(context), child: const Icon(Icons.close, color: AppColors.textHint)),
                     ],
                   ),
                   const SizedBox(height: 24),
 
-                  // التعديل هنا: تمرير initialValue
-                  _buildDialogTextField("Task", "e.g., Oil Change, Tire Rotation", initialValue: initialTask),
+                  _buildDialogTextField(context, AppLang.tr(context, 'task'), AppLang.tr(context, 'task_hint'), isDark, initialValue: initialTask),
                   const SizedBox(height: 16),
 
-                  _buildDialogTextField("Due Date", "mm/dd/yyyy", icon: Icons.calendar_today_outlined, initialValue: initialDate),
+                  _buildDialogTextField(context, AppLang.tr(context, 'due_date').replaceAll(":", ""), AppLang.tr(context, 'date_hint'), isDark, icon: Icons.calendar_today_outlined, initialValue: initialDate),
                   const SizedBox(height: 16),
 
-                  const Text("Notes (Optional)", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  Text(AppLang.tr(context, 'notes_optional'), style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isDark ? Colors.white : Colors.black87)),
                   const SizedBox(height: 8),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: isDark ? const Color(0xFF2A2A2A) : Colors.white,
                       borderRadius: BorderRadius.circular(12),
                       border: Border.all(color: Colors.green, width: 2),
                     ),
                     child: TextField(
-                      controller: TextEditingController(text: initialNotes), // التعديل هنا: تمرير الداتا للـ TextField
+                      controller: TextEditingController(text: initialNotes),
                       maxLines: 3,
-                      decoration: const InputDecoration(
-                        hintText: "Additional details...",
-                        hintStyle: TextStyle(color: AppColors.textHint, fontSize: 14),
+                      style: TextStyle(color: isDark ? Colors.white : Colors.black87),
+                      decoration: InputDecoration(
+                        hintText: AppLang.tr(context, 'additional_details'),
+                        hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 14),
                         border: InputBorder.none,
                       ),
                     ),
@@ -252,9 +252,9 @@ class RemindersScreen extends StatelessWidget {
                           style: OutlinedButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            side: const BorderSide(color: AppColors.border),
+                            side: BorderSide(color: isDark ? AppColors.borderDark : AppColors.borderLight),
                           ),
-                          child: const Text("Cancel", style: TextStyle(color: Colors.black)),
+                          child: Text(AppLang.tr(context, 'cancel'), style: TextStyle(color: isDark ? Colors.white : Colors.black)),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -266,7 +266,7 @@ class RemindersScreen extends StatelessWidget {
                             backgroundColor: AppColors.primary,
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                           ),
-                          child: Text(isEdit ? "Save Changes" : "Add Reminder", style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                          child: Text(isEdit ? AppLang.tr(context, 'save_changes') : AppLang.tr(context, 'add_reminder'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
                         ),
                       ),
                     ],
@@ -280,30 +280,28 @@ class RemindersScreen extends StatelessWidget {
     );
   }
 
-  // ==========================================
-  // نافذة تأكيد المسح (Delete Confirmation)
-  // ==========================================
-  void _showDeleteConfirmation(BuildContext context) {
+  void _showDeleteConfirmation(BuildContext context, bool isDark) {
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
+          backgroundColor: isDark ? const Color(0xFF1A1A1A) : Colors.white,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text("Delete Reminder", style: TextStyle(fontWeight: FontWeight.bold)),
-          content: const Text("Are you sure you want to delete this reminder? This action cannot be undone."),
+          title: Text(AppLang.tr(context, 'delete_reminder'), style: TextStyle(fontWeight: FontWeight.bold, color: isDark ? Colors.white : Colors.black87)),
+          content: Text(AppLang.tr(context, 'delete_confirm_msg'), style: TextStyle(color: isDark ? Colors.white70 : Colors.black87)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text("Cancel", style: TextStyle(color: AppColors.textHint)),
+              child: Text(AppLang.tr(context, 'cancel'), style: const TextStyle(color: AppColors.textHint)),
             ),
             ElevatedButton(
               onPressed: () {
                 Navigator.pop(context);
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text("Reminder deleted successfully!"),
+                  SnackBar(
+                    content: Text(AppLang.tr(context, 'reminder_deleted')),
                     backgroundColor: Colors.redAccent,
-                    duration: Duration(seconds: 2),
+                    duration: const Duration(seconds: 2),
                   ),
                 );
               },
@@ -311,7 +309,7 @@ class RemindersScreen extends StatelessWidget {
                 backgroundColor: Colors.redAccent,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
               ),
-              child: const Text("Delete", style: TextStyle(color: Colors.white)),
+              child: Text(AppLang.tr(context, 'delete'), style: const TextStyle(color: Colors.white)),
             ),
           ],
         );
@@ -319,27 +317,27 @@ class RemindersScreen extends StatelessWidget {
     );
   }
 
-  // دالة مساعدة لحقول الإدخال
-  Widget _buildDialogTextField(String label, String hint, {IconData? icon, String initialValue = ""}) {
+  Widget _buildDialogTextField(BuildContext context, String label, String hint, bool isDark, {IconData? icon, String initialValue = ""}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+        Text(label, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12, color: isDark ? Colors.white : Colors.black87)),
         const SizedBox(height: 8),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            color: AppColors.background,
+            color: isDark ? const Color(0xFF2A2A2A) : AppColors.background,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: isDark ? AppColors.borderDark : AppColors.borderLight),
           ),
           child: TextField(
-            controller: TextEditingController(text: initialValue), // التعديل هنا: ربط الكنترولر بالقيمة
+            controller: TextEditingController(text: initialValue),
+            style: TextStyle(color: isDark ? Colors.white : Colors.black87),
             decoration: InputDecoration(
               hintText: hint,
               hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 14),
               border: InputBorder.none,
-              suffixIcon: icon != null ? Icon(icon, color: Colors.black, size: 20) : null,
+              suffixIcon: icon != null ? Icon(icon, color: isDark ? Colors.white70 : Colors.black, size: 20) : null,
             ),
           ),
         ),

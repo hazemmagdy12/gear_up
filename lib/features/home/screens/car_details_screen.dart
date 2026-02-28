@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart'; // 1. استدعاء القاموس
 
 class CarDetailsScreen extends StatelessWidget {
   final String brand;
@@ -19,11 +20,9 @@ class CarDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // 1. تحديد الثيم الحالي
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      // 2. استخدام لون الخلفية من الثيم
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SingleChildScrollView(
         child: Column(
@@ -35,33 +34,33 @@ class CarDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildTitleSection(isDark),
+                  _buildTitleSection(context, isDark),
                   const SizedBox(height: 40),
 
-                  Text("Specifications", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
+                  Text(AppLang.tr(context, 'specifications_title'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
                   const SizedBox(height: 20),
-                  _buildSpecsGrid(isDark),
+                  _buildSpecsGrid(context, isDark),
                   const SizedBox(height: 40),
 
-                  Text("About this vehicle", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
+                  Text(AppLang.tr(context, 'about_vehicle'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
                   const SizedBox(height: 16),
                   Text(
-                    "The $brand $model (2025) is a premium vehicle featuring a powerful 335 HP engine with 3000cc capacity. With its Automatic transmission and 8 gear shifts, this car delivers exceptional performance and efficiency. The vehicle can reach a maximum speed of 250 km/h and offers 650 L of luggage capacity, making it perfect for both daily commutes and long journeys.",
+                    "The $brand $model (2025) ${AppLang.tr(context, 'mock_desc')}",
                     style: TextStyle(color: isDark ? Colors.white70 : AppColors.textSecondary, height: 1.8, fontSize: 15),
                   ),
                   const SizedBox(height: 40),
 
-                  _buildCompareButton(),
+                  _buildCompareButton(context),
                   const SizedBox(height: 32),
 
                   if (isPromoted) ...[
-                    _buildViewsCounter(),
+                    _buildViewsCounter(context),
                     const SizedBox(height: 40),
                   ],
 
-                  Text("Reviews", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
+                  Text(AppLang.tr(context, 'reviews'), style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: isDark ? Colors.white : Colors.black87)),
                   const SizedBox(height: 20),
-                  _buildReviewSection(isDark),
+                  _buildReviewSection(context, isDark),
                   const SizedBox(height: 60),
                 ],
               ),
@@ -78,7 +77,7 @@ class CarDetailsScreen extends StatelessWidget {
         Container(
           height: 380,
           decoration: BoxDecoration(
-            color: isDark ? const Color(0xFF2A2A2A) : AppColors.surfaceLight, // لون خلفية الصورة
+            color: isDark ? const Color(0xFF2A2A2A) : AppColors.surfaceLight,
           ),
           child: const Center(child: Icon(Icons.directions_car, size: 160, color: AppColors.textHint)),
         ),
@@ -127,10 +126,10 @@ class CarDetailsScreen extends StatelessWidget {
                 boxShadow: [BoxShadow(color: AppColors.primary.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 5))],
               ),
               child: Row(
-                children: const [
-                  Icon(Icons.star, color: Colors.white, size: 18),
-                  SizedBox(width: 8),
-                  Text("Top Rated", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
+                children: [
+                  const Icon(Icons.star, color: Colors.white, size: 18),
+                  const SizedBox(width: 8),
+                  Text(AppLang.tr(context, 'top_rated'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 14)),
                 ],
               ),
             ),
@@ -139,7 +138,7 @@ class CarDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTitleSection(bool isDark) {
+  Widget _buildTitleSection(BuildContext context, bool isDark) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +154,7 @@ class CarDetailsScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 model,
-                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 32, height: 1.2, color: isDark ? Colors.white : Colors.black87), // لون الموديل
+                style: TextStyle(fontWeight: FontWeight.w900, fontSize: 32, height: 1.2, color: isDark ? Colors.white : Colors.black87),
               ),
               const SizedBox(height: 16),
               Row(
@@ -163,7 +162,7 @@ class CarDetailsScreen extends StatelessWidget {
                   const Icon(Icons.star, color: Colors.amber, size: 22),
                   const SizedBox(width: 6),
                   Text(rating, style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
-                  const Text("  •  124 reviews", style: TextStyle(color: AppColors.textHint, fontSize: 15, fontWeight: FontWeight.w500)),
+                  Text("  •  124 ${AppLang.tr(context, 'reviews')}", style: const TextStyle(color: AppColors.textHint, fontSize: 15, fontWeight: FontWeight.w500)),
                 ],
               ),
             ],
@@ -174,40 +173,42 @@ class CarDetailsScreen extends StatelessWidget {
           children: [
             Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900, fontSize: 26)),
             const SizedBox(height: 6),
-            const Text("Average price", style: TextStyle(color: AppColors.textHint, fontSize: 13, fontWeight: FontWeight.w500)),
+            Text(AppLang.tr(context, 'average_price'), style: const TextStyle(color: AppColors.textHint, fontSize: 13, fontWeight: FontWeight.w500)),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSpecsGrid(bool isDark) {
+  Widget _buildSpecsGrid(BuildContext context, bool isDark) {
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
       padding: EdgeInsets.zero,
       physics: const NeverScrollableScrollPhysics(),
-      childAspectRatio: 2.2,
+      // التعديل الرئيسي لحل مشكلة الـ Overflow
+      childAspectRatio: 1.9,
       mainAxisSpacing: 16,
       crossAxisSpacing: 16,
       children: [
-        _buildSpecCard("Company", brand, isDark),
-        _buildSpecCard("Model", model, isDark),
-        _buildSpecCard("Year", "2025", isDark),
-        _buildSpecCard("HP", "335", isDark),
-        _buildSpecCard("CC", "3000", isDark),
-        _buildSpecCard("Torque", "330 lb-ft", isDark),
-        _buildSpecCard("Transmission", "Automatic", isDark),
-        _buildSpecCard("Luggage", "650 L", isDark),
+        _buildSpecCard(AppLang.tr(context, 'company'), brand, isDark),
+        _buildSpecCard(AppLang.tr(context, 'model'), model, isDark),
+        _buildSpecCard(AppLang.tr(context, 'year'), "2025", isDark),
+        _buildSpecCard(AppLang.tr(context, 'hp'), "335", isDark),
+        _buildSpecCard(AppLang.tr(context, 'cc'), "3000", isDark),
+        _buildSpecCard(AppLang.tr(context, 'torque'), "330 lb-ft", isDark),
+        _buildSpecCard(AppLang.tr(context, 'transmission'), "Automatic", isDark),
+        _buildSpecCard(AppLang.tr(context, 'luggage_capacity'), "650 L", isDark),
       ],
     );
   }
 
   Widget _buildSpecCard(String title, String value, bool isDark) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+      // التعديل الثاني: تقليل الـ Padding عشان ندي مساحة للنص
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF1E262B) : const Color(0xFFF8F9FA), // لون كارت المواصفات
+        color: isDark ? const Color(0xFF1E262B) : const Color(0xFFF8F9FA),
         border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE)),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -216,20 +217,24 @@ class CarDetailsScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text(title, style: const TextStyle(color: AppColors.textHint, fontSize: 13, fontWeight: FontWeight.w500)),
-          const SizedBox(height: 6),
-          Text(value, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : Colors.black87), overflow: TextOverflow.ellipsis),
+          const SizedBox(height: 4),
+          // التعديل الثالث: إضافة FittedBox عشان يصغر الخط لو الكلام طويل
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(value, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16, color: isDark ? Colors.white : Colors.black87)),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildCompareButton() {
+  Widget _buildCompareButton(BuildContext context) {
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton.icon(
         onPressed: () {},
         icon: const Icon(Icons.compare_arrows, color: Colors.white, size: 24),
-        label: const Text("Added to Comparison", style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+        label: Text(AppLang.tr(context, 'added_to_comparison'), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
           padding: const EdgeInsets.symmetric(vertical: 20),
@@ -241,7 +246,7 @@ class CarDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildViewsCounter() {
+  Widget _buildViewsCounter(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 24),
       decoration: BoxDecoration(
@@ -269,10 +274,10 @@ class CarDetailsScreen extends StatelessWidget {
           const SizedBox(width: 24),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text("2,543", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 2.0)),
-              SizedBox(height: 4),
-              Text("Total Views", style: TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.w500)),
+            children: [
+              const Text("2,543", style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white, letterSpacing: 2.0)),
+              const SizedBox(height: 4),
+              Text(AppLang.tr(context, 'total_views'), style: const TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.w500)),
             ],
           ),
         ],
@@ -280,7 +285,7 @@ class CarDetailsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildReviewSection(bool isDark) {
+  Widget _buildReviewSection(BuildContext context, bool isDark) {
     return Column(
       children: [
         Container(
@@ -296,7 +301,7 @@ class CarDetailsScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text("Write a Review", style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
+              Text(AppLang.tr(context, 'write_review'), style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18, color: isDark ? Colors.white : Colors.black87)),
               const SizedBox(height: 16),
               Row(
                 children: List.generate(5, (index) => const Padding(
@@ -313,9 +318,9 @@ class CarDetailsScreen extends StatelessWidget {
                   border: Border.all(color: isDark ? AppColors.borderDark : const Color(0xFFEEEEEE)),
                 ),
                 child: TextField(
-                  style: TextStyle(color: isDark ? Colors.white : Colors.black87), // لون الكتابة
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black87),
                   decoration: InputDecoration(
-                    hintText: "Share your experience with this car...",
+                    hintText: AppLang.tr(context, 'share_experience'),
                     hintStyle: const TextStyle(color: AppColors.textHint, fontSize: 15),
                     border: InputBorder.none,
                   ),
@@ -328,7 +333,7 @@ class CarDetailsScreen extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: () {},
                   icon: const Icon(Icons.send, color: Colors.white, size: 18),
-                  label: const Text("Submit", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
+                  label: Text(AppLang.tr(context, 'submit'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16)),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),

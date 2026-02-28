@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart'; // استدعاء القاموس
 import '../screens/car_details_screen.dart';
 
 class CarCard extends StatelessWidget {
@@ -24,7 +25,6 @@ class CarCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // السطر ده بيكتشف إحنا في الدارك ولا اللايت
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
@@ -46,10 +46,8 @@ class CarCard extends StatelessWidget {
         width: 280,
         margin: const EdgeInsets.only(right: 20),
         decoration: BoxDecoration(
-          // تغيير لون الكارت بناء على الثيم
           color: isDark ? AppColors.surfaceDark : Colors.white,
           borderRadius: BorderRadius.circular(24),
-          // إضافة حد خفيف في الدارك مود عشان الكارت يبان من الخلفية
           border: Border.all(color: isDark ? AppColors.borderDark : Colors.transparent),
           boxShadow: [
             BoxShadow(
@@ -69,7 +67,6 @@ class CarCard extends StatelessWidget {
                 Container(
                   height: 200,
                   decoration: BoxDecoration(
-                    // تغيير لون خلفية الصورة
                     color: isDark ? const Color(0xFF2A2A2A) : AppColors.surfaceLight,
                     borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
                   ),
@@ -84,14 +81,22 @@ class CarCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       decoration: BoxDecoration(
-                        color: AppColors.secondary,
+                        // التعديل هنا: شيلنا اللون الأسود وخليناه ياخد اللون الأزرق الأساسي للتطبيق عشان ينور في اللايت مود
+                        color: AppColors.primary,
                         borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.primary.withOpacity(0.3),
+                            blurRadius: 8,
+                            offset: const Offset(0, 3),
+                          )
+                        ],
                       ),
                       child: Row(
-                        children: const [
-                          Icon(Icons.star, color: Colors.white, size: 14),
-                          SizedBox(width: 4),
-                          Text("Top Rated", style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+                        children: [
+                          const Icon(Icons.star, color: Colors.white, size: 14),
+                          const SizedBox(width: 4),
+                          Text(AppLang.tr(context, 'top_rated'), style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
                         ],
                       ),
                     ),
@@ -122,7 +127,6 @@ class CarCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           model,
-                          // تغيير لون اسم العربية ليتناسب مع الخلفية
                           style: TextStyle(fontWeight: FontWeight.w900, fontSize: 22, color: isDark ? Colors.white : Colors.black87),
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -150,7 +154,7 @@ class CarCard extends StatelessWidget {
                     children: [
                       Text(price, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w900, fontSize: 20)),
                       const SizedBox(width: 6),
-                      Text("Average price", style: TextStyle(color: isDark ? Colors.white54 : AppColors.textHint, fontSize: 12, fontWeight: FontWeight.w500)),
+                      Text(AppLang.tr(context, 'average_price'), style: TextStyle(color: isDark ? Colors.white54 : AppColors.textHint, fontSize: 12, fontWeight: FontWeight.w500)),
                     ],
                   ),
                 ],
@@ -162,12 +166,11 @@ class CarCard extends StatelessWidget {
     );
   }
 
-  // الدالة دي بتاخد isDark عشان تظبط ألوان زراير المفضلة والمقارنة
   Widget _buildIconButton(IconData icon, bool isDark) {
     return Container(
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
-        color: isDark ? const Color(0xFF333333) : Colors.white,
+        color: isDark ? const Color(0xFF38404B) : Colors.white,
         shape: BoxShape.circle,
         boxShadow: [BoxShadow(color: Colors.black.withOpacity(isDark ? 0.3 : 0.05), blurRadius: 5, offset: const Offset(0, 2))],
       ),

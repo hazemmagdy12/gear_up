@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../core/theme/colors.dart';
+import '../../../core/localization/app_lang.dart';
 import '../../auth/screens/login_screen.dart';
 import '../../auth/screens/signup_screen.dart';
 import '../../home/screens/main_layout.dart';
@@ -9,8 +10,10 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -20,26 +23,22 @@ class WelcomeScreen extends StatelessWidget {
             children: [
               const Spacer(flex: 2),
 
-              // 1. اللوجو
               Image.asset(
                 'assets/images/logo.png',
                 height: 120,
                 width: 120,
               ),
 
-              // التعديل الأول: تقليل المسافة جداً
               const SizedBox(height: 4),
 
-              // 2. العنوان الرئيسي (بالتدرج اللوني)
               ShaderMask(
                 blendMode: BlendMode.srcIn,
-                shaderCallback: (bounds) => const LinearGradient(
+                shaderCallback: (bounds) => LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Color(0xFF2E86AB), // أزرق فاتح/تيل من فوق
-                    Color(0xFF0A3656), // كحلي/أزرق غامق جداً من تحت
-                  ],
+                  colors: isDark
+                      ? [const Color(0xFF64B5F6), const Color(0xFF1976D2)]
+                      : [const Color(0xFF2E86AB), const Color(0xFF0A3656)],
                 ).createShader(bounds),
                 child: Text(
                   "GEAR UP",
@@ -51,9 +50,9 @@ class WelcomeScreen extends StatelessWidget {
                     color: Colors.white,
                     shadows: [
                       Shadow(
-                        color: Colors.black.withOpacity(0.3),
-                        offset: const Offset(0, 3),
-                        blurRadius: 5,
+                        color: isDark ? const Color(0xFF64B5F6).withOpacity(0.6) : Colors.black.withOpacity(0.3),
+                        offset: Offset(0, isDark ? 0 : 3),
+                        blurRadius: isDark ? 10 : 5,
                       ),
                     ],
                   ),
@@ -61,19 +60,18 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
 
-              // 3. العنوان الفرعي
-              const Text(
-                "Your Premium Car Companion",
+              Text(
+                AppLang.tr(context, 'premium_companion'),
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 16,
-                  color: AppColors.textSecondary,
+                  color: isDark ? Colors.white70 : AppColors.textSecondary,
                 ),
               ),
 
               const Spacer(flex: 1),
 
-              // 4. زرار Skip
+              // لو اليوزر داس تخطي، هيدخل الرئيسية بس كـ Guest (ومش هيتحفظله uid)
               OutlinedButton(
                 onPressed: () {
                   Navigator.pushReplacement(
@@ -82,20 +80,19 @@ class WelcomeScreen extends StatelessWidget {
                   );
                 },
                 style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AppColors.border),
+                  side: BorderSide(color: isDark ? AppColors.borderDark : AppColors.borderLight),
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Text(
-                  "Skip to Home",
-                  style: TextStyle(color: Colors.black),
+                child: Text(
+                  AppLang.tr(context, 'skip_to_home'),
+                  style: TextStyle(color: isDark ? Colors.white : Colors.black, fontWeight: FontWeight.bold),
                 ),
               ),
               const SizedBox(height: 16),
 
-              // 5. زرار Login
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -110,11 +107,10 @@ class WelcomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Text("Login",style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                child: Text(AppLang.tr(context, 'login'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 16),
 
-              // 6. زرار Sign Up
               ElevatedButton(
                 onPressed: () {
                   Navigator.push(
@@ -129,7 +125,7 @@ class WelcomeScreen extends StatelessWidget {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                child: const Text("Sign Up", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),),
+                child: Text(AppLang.tr(context, 'sign_up'), style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
               ),
 
               const Spacer(flex: 1),
